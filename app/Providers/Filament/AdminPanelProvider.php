@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(\App\Filament\Pages\Auth\Login::class)
             ->brandName('Euroship CRM')
             ->brandLogo('https://euroshipspain.com/wp-content/uploads/2023/01/logo.svg')
             ->favicon('https://euroshipspain.com/wp-content/uploads/2023/01/logo.svg')
