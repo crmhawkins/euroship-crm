@@ -101,7 +101,8 @@ class PedidoResource extends Resource
                 Forms\Components\DatePicker::make('fecha_pedido')
                     ->label(__('Fecha de pedido'))
                     ->required()
-                    ->native(false),
+                    ->native(false)
+                    ->displayFormat('d/m/Y'),
                 Forms\Components\TextInput::make('puerto_entrega')
                     ->label(__('Puerto de entrega'))
                     ->required()

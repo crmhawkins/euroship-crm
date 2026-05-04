@@ -47,7 +47,8 @@ class EscalaResource extends Resource
                 Forms\Components\DatePicker::make('fecha')
                     ->label(__('Fecha'))
                     ->required()
-                    ->native(false),
+                    ->native(false)
+                    ->displayFormat('d/m/Y'),
                 Forms\Components\TextInput::make('puerto')
                     ->label(__('Puerto'))
                     ->required()
