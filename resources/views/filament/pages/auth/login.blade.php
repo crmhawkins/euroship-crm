@@ -1,3 +1,10 @@
+{{-- Forzar light mode en login (dark mode haría texto blanco sobre fondo blanco) --}}
+<script>
+    document.documentElement.classList.remove('dark');
+    var _origLoadDarkMode = window.loadDarkMode;
+    window.loadDarkMode = function() { document.documentElement.classList.remove('dark'); };
+</script>
+
 {{-- Overlay fijo: escapa completamente del contenedor Filament --}}
 <div style="position:fixed;inset:0;display:flex;z-index:50;overflow:hidden;">
 
@@ -148,4 +155,26 @@
     }
     /* Inputs */
     .fi-input-wrp { border-radius: 0.625rem !important; }
+
+    /* Overrides dark mode en el formulario — texto siempre oscuro sobre fondo blanco */
+    .fi-fo-field-wrp label span,
+    .fi-fo-field-wrp .fi-fo-field-wrp-label span,
+    .fi-input,
+    .fi-fo-checkbox-input + span {
+        color: #1e293b !important;
+    }
+    .fi-input {
+        background-color: white !important;
+        background: white !important;
+    }
+    .fi-input-wrp {
+        background-color: white !important;
+        --tw-ring-color: rgba(15,23,42,0.1) !important;
+    }
+    .fi-fo-field-wrp {
+        color: #1e293b !important;
+    }
+    /* Checkbox label */
+    .fi-fo-field-wrp .text-gray-950 { color: #1e293b !important; }
+    .fi-fo-field-wrp .dark\:text-white { color: #1e293b !important; }
 </style>
