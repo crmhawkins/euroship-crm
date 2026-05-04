@@ -29,8 +29,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(\App\Filament\Pages\Auth\Login::class)
             ->brandName('Euroship CRM')
-            ->brandLogo('https://euroshipspain.com/wp-content/uploads/2023/01/logo.svg')
-            ->favicon('https://euroshipspain.com/wp-content/uploads/2023/01/logo.svg')
+            ->brandLogo('https://euroshipspain.com/wp-content/uploads/2025/08/cropped-logo_euroship-1-270x270.png')
+            ->brandLogoHeight('2rem')
+            ->favicon('https://euroshipspain.com/wp-content/uploads/2025/08/cropped-logo_euroship-1-270x270.png')
             ->colors([
                 'primary'  => Color::hex('#293C8E'),
                 'secondary' => Color::hex('#29A6DF'),
