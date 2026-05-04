@@ -21,6 +21,16 @@ class DatabaseSeeder extends Seeder
         );
 
         User::updateOrCreate(
+            ['email' => 'dani.mefle@hawkins.es'],
+            [
+                'name' => 'Dani Mefle',
+                'password' => Hash::make('Euroship@2026'),
+                'locale' => 'es',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        User::updateOrCreate(
             ['email' => 'juancarlos@euroship.es'],
             [
                 'name' => 'Juan Carlos Euroship',
