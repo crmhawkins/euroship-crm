@@ -11,6 +11,6 @@ class Login extends BaseLogin
 
     public function render(): View
     {
-        return view(static::$view, $this->getViewData());
+        return view(static::$view);
     }
 }
