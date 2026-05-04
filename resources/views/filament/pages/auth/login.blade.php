@@ -1,131 +1,110 @@
-<style>
-    /* Strip Filament's simple layout so our custom layout takes over fully */
-    body.fi-body { background: #f8fafc !important; }
-    .fi-simple-layout { padding: 0 !important; min-height: 100vh !important; align-items: stretch !important; }
-    .fi-simple-main-ctn { display: block !important; width: 100% !important; flex: 1 !important; }
-    .fi-simple-main {
-        all: unset !important;
-        display: block !important;
-        width: 100% !important;
-        min-height: 100vh !important;
-    }
-</style>
+{{-- Overlay fijo: escapa completamente del contenedor Filament --}}
+<div style="position:fixed;inset:0;display:flex;z-index:50;overflow:hidden;">
 
-<div class="min-h-screen flex flex-col lg:flex-row">
+    {{-- ===== Panel izquierdo: branding ===== --}}
+    <div class="hidden lg:flex flex-col items-center justify-center relative overflow-hidden"
+         style="width:50%;flex-shrink:0;background:linear-gradient(145deg,#070f2b 0%,#0d1b4b 30%,#1a2f7a 60%,#1e5fa8 100%);">
 
-    {{-- ===== Panel izquierdo: branding azul ===== --}}
-    <div class="relative hidden lg:flex lg:w-1/2 flex-col items-center justify-center overflow-hidden"
-         style="background: linear-gradient(145deg, #070f2b 0%, #0d1b4b 30%, #1a2f7a 60%, #1e5fa8 100%); min-height: 100vh;">
+        {{-- Patrón dots --}}
+        <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(41,166,223,0.18) 1.5px,transparent 1.5px);background-size:36px 36px;pointer-events:none;"></div>
 
-        {{-- Fondo: patrón de puntos --}}
-        <div class="absolute inset-0 pointer-events-none"
-             style="background-image: radial-gradient(circle, rgba(41,166,223,0.18) 1.5px, transparent 1.5px); background-size: 36px 36px;"></div>
+        {{-- Círculos glow --}}
+        <div style="position:absolute;top:5rem;right:2.5rem;width:12rem;height:12rem;border-radius:50%;background:radial-gradient(circle,rgba(41,166,223,0.2),transparent);filter:blur(24px);pointer-events:none;"></div>
+        <div style="position:absolute;bottom:8rem;left:2rem;width:16rem;height:16rem;border-radius:50%;background:radial-gradient(circle,rgba(41,60,142,0.35),transparent);filter:blur(32px);pointer-events:none;"></div>
 
-        {{-- Fondo: olas bottom --}}
-        <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="z-index:1;">
-            <svg viewBox="0 0 1440 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width:100%;display:block;">
-                <path d="M0,100 C480,200 960,0 1440,100 L1440,200 L0,200 Z" fill="rgba(255,255,255,0.03)"/>
-                <path d="M0,130 C360,60 1080,190 1440,120 L1440,200 L0,200 Z" fill="rgba(255,255,255,0.05)"/>
-                <path d="M0,160 C600,100 900,200 1440,150 L1440,200 L0,200 Z" fill="rgba(41,166,223,0.08)"/>
+        {{-- Olas bottom --}}
+        <div style="position:absolute;bottom:0;left:0;right:0;pointer-events:none;">
+            <svg viewBox="0 0 1440 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width:100%;display:block;">
+                <path d="M0,90 C480,180 960,0 1440,90 L1440,180 L0,180 Z" fill="rgba(255,255,255,0.03)"/>
+                <path d="M0,120 C360,50 1080,170 1440,110 L1440,180 L0,180 Z" fill="rgba(255,255,255,0.04)"/>
+                <path d="M0,150 C600,90 900,180 1440,140 L1440,180 L0,180 Z" fill="rgba(41,166,223,0.07)"/>
             </svg>
         </div>
 
-        {{-- Círculos decorativos --}}
-        <div class="absolute top-20 right-10 w-32 h-32 rounded-full pointer-events-none"
-             style="background: radial-gradient(circle, rgba(41,166,223,0.15), transparent); filter: blur(20px);"></div>
-        <div class="absolute bottom-40 left-10 w-48 h-48 rounded-full pointer-events-none"
-             style="background: radial-gradient(circle, rgba(41,60,142,0.3), transparent); filter: blur(30px);"></div>
-
         {{-- Contenido --}}
-        <div class="relative flex flex-col items-center text-center px-16" style="z-index:2;">
+        <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 4rem;">
 
             {{-- Logo --}}
-            <div class="mb-8 p-6 rounded-3xl relative" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+            <div style="margin-bottom:2rem;padding:1.5rem;border-radius:1.5rem;background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);box-shadow:0 8px 32px rgba(0,0,0,0.3);">
                 <img src="https://euroshipspain.com/wp-content/uploads/2025/08/cropped-logo_euroship-1-270x270.png"
                      alt="Euroship"
-                     class="w-28 h-28 object-contain"
-                     style="filter: drop-shadow(0 4px 16px rgba(41,166,223,0.4));"
+                     style="width:6.5rem;height:6.5rem;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(41,166,223,0.45));"
                      onerror="this.style.display='none'" />
             </div>
 
             {{-- Título --}}
-            <h1 class="text-5xl font-black text-white mb-3 tracking-tight" style="letter-spacing: -0.02em;">
+            <h1 style="font-size:2.75rem;font-weight:900;color:white;margin-bottom:0.5rem;letter-spacing:-0.03em;line-height:1.1;">
                 Euroship CRM
             </h1>
 
             {{-- Separador --}}
-            <div class="flex items-center gap-3 mb-6">
-                <div class="h-px w-12 rounded-full" style="background: rgba(41,166,223,0.5);"></div>
-                <div class="w-2 h-2 rounded-full" style="background: #29A6DF;"></div>
-                <div class="h-px w-12 rounded-full" style="background: rgba(41,166,223,0.5);"></div>
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+                <div style="height:1px;width:3rem;background:rgba(41,166,223,0.5);border-radius:999px;"></div>
+                <div style="width:0.4rem;height:0.4rem;border-radius:50%;background:#29A6DF;"></div>
+                <div style="height:1px;width:3rem;background:rgba(41,166,223,0.5);border-radius:999px;"></div>
             </div>
 
-            {{-- Subtítulo --}}
-            <p class="text-xl font-semibold mb-3" style="color: #29A6DF; letter-spacing: 0.05em; text-transform: uppercase; font-size: 0.85rem;">
+            {{-- Subtitle --}}
+            <p style="font-size:0.75rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#29A6DF;margin-bottom:0.75rem;">
                 Suministros Marítimos
             </p>
-            <p class="text-sm max-w-xs leading-relaxed" style="color: rgba(255,255,255,0.55);">
+            <p style="font-size:0.875rem;color:rgba(255,255,255,0.5);max-width:22rem;line-height:1.6;">
                 Gestión integral de clientes, barcos, escalas y pedidos para su operación marítima
             </p>
 
             {{-- Feature cards --}}
-            <div class="mt-14 grid grid-cols-3 gap-4">
+            <div style="margin-top:3rem;display:grid;grid-template-columns:repeat(3,1fr);gap:0.875rem;">
                 @foreach([
-                    ['🚢', 'Barcos', 'Gestión de flota'],
-                    ['⚓', 'Escalas', 'Puertos y rutas'],
-                    ['📦', 'Pedidos', 'Suministros'],
-                ] as [$icon, $label, $sub])
-                <div class="flex flex-col items-center gap-2 p-4 rounded-2xl transition-transform hover:scale-105"
-                     style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);">
-                    <span class="text-2xl">{{ $icon }}</span>
-                    <span class="text-white font-semibold text-sm">{{ $label }}</span>
-                    <span class="text-xs" style="color: rgba(255,255,255,0.4);">{{ $sub }}</span>
+                    ['🚢','Barcos','Gestión de flota'],
+                    ['⚓','Escalas','Puertos y rutas'],
+                    ['📦','Pedidos','Suministros'],
+                ] as [$icon,$label,$sub])
+                <div style="display:flex;flex-direction:column;align-items:center;gap:0.375rem;padding:1rem 0.875rem;border-radius:1rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <span style="font-size:1.5rem;">{{ $icon }}</span>
+                    <span style="color:white;font-weight:600;font-size:0.8rem;">{{ $label }}</span>
+                    <span style="color:rgba(255,255,255,0.38);font-size:0.7rem;">{{ $sub }}</span>
                 </div>
                 @endforeach
             </div>
 
-            {{-- Badge versión --}}
-            <div class="mt-12 px-4 py-1.5 rounded-full text-xs font-medium"
-                 style="background: rgba(41,166,223,0.15); color: #29A6DF; border: 1px solid rgba(41,166,223,0.25);">
+            {{-- Badge --}}
+            <div style="margin-top:2.5rem;padding:0.35rem 1rem;border-radius:999px;background:rgba(41,166,223,0.12);color:#29A6DF;font-size:0.7rem;font-weight:600;border:1px solid rgba(41,166,223,0.22);letter-spacing:0.05em;">
                 Sistema de gestión v2.0
             </div>
         </div>
     </div>
 
     {{-- ===== Panel derecho: formulario ===== --}}
-    <div class="w-full lg:w-1/2 flex flex-col items-center justify-center min-h-screen px-6 py-12"
-         style="background: #f8fafc;">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem;background:#f1f5f9;overflow-y:auto;">
 
         {{-- Logo móvil --}}
-        <div class="lg:hidden flex flex-col items-center mb-10">
-            <div class="p-4 rounded-2xl mb-4 shadow-lg" style="background: linear-gradient(135deg, #1a2f7a, #293C8E);">
+        <div class="lg:hidden" style="display:flex;flex-direction:column;align-items:center;margin-bottom:2.5rem;">
+            <div style="padding:1rem;border-radius:1.25rem;margin-bottom:1rem;background:linear-gradient(135deg,#1a2f7a,#293C8E);box-shadow:0 4px 20px rgba(41,60,142,0.35);">
                 <img src="https://euroshipspain.com/wp-content/uploads/2025/08/cropped-logo_euroship-1-270x270.png"
-                     alt="Euroship" class="w-16 h-16 object-contain"
+                     alt="Euroship" style="width:4rem;height:4rem;object-fit:contain;"
                      onerror="this.style.display='none'" />
             </div>
-            <h2 class="text-xl font-bold text-gray-800">Euroship CRM</h2>
-            <p class="text-sm text-gray-500 mt-1">Suministros marítimos</p>
+            <h2 style="font-size:1.25rem;font-weight:700;color:#1e293b;">Euroship CRM</h2>
         </div>
 
-        <div class="w-full max-w-sm">
+        <div style="width:100%;max-width:22rem;">
 
             {{-- Header --}}
-            <div class="mb-8">
-                <div class="flex items-center gap-2 mb-1">
-                    <div class="w-1 h-6 rounded-full" style="background: #293C8E;"></div>
-                    <p class="text-sm font-semibold uppercase tracking-widest" style="color: #293C8E;">Portal de acceso</p>
+            <div style="margin-bottom:2rem;">
+                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+                    <div style="width:3px;height:1.25rem;border-radius:999px;background:#293C8E;"></div>
+                    <p style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#293C8E;">Portal de acceso</p>
                 </div>
-                <h2 class="text-3xl font-black text-gray-900 mt-2" style="letter-spacing: -0.02em;">Bienvenido</h2>
-                <p class="text-gray-500 mt-1 text-sm">Introduce tus credenciales para continuar</p>
+                <h2 style="font-size:2rem;font-weight:900;color:#0f172a;letter-spacing:-0.025em;margin-top:0.5rem;">Bienvenido</h2>
+                <p style="color:#64748b;margin-top:0.25rem;font-size:0.875rem;">Introduce tus credenciales para continuar</p>
             </div>
 
-            {{-- Card formulario --}}
-            <div class="rounded-2xl overflow-hidden" style="background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 20px 60px -10px rgba(41,60,142,0.12); border: 1px solid rgba(0,0,0,0.06);">
-                <div class="px-8 py-8">
+            {{-- Card --}}
+            <div style="background:white;border-radius:1.25rem;box-shadow:0 4px 6px -1px rgba(0,0,0,0.04),0 20px 60px -10px rgba(41,60,142,0.14);border:1px solid rgba(0,0,0,0.06);overflow:hidden;">
+                <div style="padding:2rem;">
                     <x-filament-panels::form wire:submit="authenticate">
                         {{ $this->form }}
-
-                        <div class="mt-6">
+                        <div style="margin-top:1.5rem;">
                             <x-filament-panels::form.actions
                                 :actions="$this->getCachedFormActions()"
                                 :full-width="true"
@@ -133,48 +112,40 @@
                         </div>
                     </x-filament-panels::form>
                 </div>
-
-                {{-- Footer card --}}
-                <div class="px-8 py-4 border-t" style="background: #f8fafc; border-color: rgba(0,0,0,0.05);">
-                    <p class="text-center text-xs text-gray-400">
+                <div style="padding:0.875rem 2rem;background:#f8fafc;border-top:1px solid rgba(0,0,0,0.05);">
+                    <p style="text-align:center;font-size:0.75rem;color:#94a3b8;">
                         ¿Problemas para acceder?
-                        <a href="mailto:soporte@hawkins.es" class="font-medium hover:underline" style="color: #293C8E;">Contactar soporte</a>
+                        <a href="mailto:soporte@hawkins.es" style="color:#293C8E;font-weight:600;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Contactar soporte</a>
                     </p>
                 </div>
             </div>
 
             {{-- Footer --}}
-            <div class="mt-8 flex items-center justify-center gap-2">
-                <div class="h-px flex-1 rounded-full bg-gray-200"></div>
-                <p class="text-xs text-gray-400 px-3">© {{ date('Y') }} Euroship Supplies</p>
-                <div class="h-px flex-1 rounded-full bg-gray-200"></div>
+            <div style="margin-top:1.75rem;display:flex;align-items:center;gap:0.75rem;">
+                <div style="flex:1;height:1px;background:#e2e8f0;border-radius:999px;"></div>
+                <p style="font-size:0.7rem;color:#94a3b8;">© {{ date('Y') }} Euroship Supplies</p>
+                <div style="flex:1;height:1px;background:#e2e8f0;border-radius:999px;"></div>
             </div>
-
         </div>
     </div>
-
 </div>
 
 <style>
-    /* Override Filament button color to match brand */
-    .fi-btn-color-primary {
-        --c-400: 105, 119, 176 !important;
-        --c-500: 41, 60, 142 !important;
-        --c-600: 37, 54, 128 !important;
-    }
-    /* Form inputs styling */
-    .fi-input {
-        border-radius: 0.625rem !important;
-    }
-    .fi-input-wrp {
-        border-radius: 0.625rem !important;
-    }
-    /* Enlarge submit button */
+    /* Nuestro overlay fixed (z-50) cubre el shell de Filament — no ocultar main o el fixed div no se pinta */
+    .fi-simple-layout { background: transparent !important; padding: 0 !important; }
+    .fi-simple-main-ctn { background: transparent !important; }
+    .fi-simple-main { background: transparent !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; margin: 0 !important; border-radius: 0 !important; }
+    body.fi-body { overflow: hidden; background: #070f2b !important; }
+
+    /* Botón submit */
     .fi-ac-btn-action[type="submit"] {
         padding-top: 0.75rem !important;
         padding-bottom: 0.75rem !important;
         border-radius: 0.75rem !important;
-        font-size: 0.95rem !important;
-        letter-spacing: 0.02em !important;
+        font-size: 0.9rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.03em !important;
     }
+    /* Inputs */
+    .fi-input-wrp { border-radius: 0.625rem !important; }
 </style>
