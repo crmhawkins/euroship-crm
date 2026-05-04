@@ -77,8 +77,8 @@
     {{-- ===== Panel derecho: formulario ===== --}}
     <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem;background:#f1f5f9;overflow-y:auto;">
 
-        {{-- Logo móvil --}}
-        <div class="lg:hidden" style="display:flex;flex-direction:column;align-items:center;margin-bottom:2.5rem;">
+        {{-- Logo móvil (solo en pantallas < lg) --}}
+        <div class="flex flex-col items-center lg:hidden" style="margin-bottom:2.5rem;">
             <div style="padding:1rem;border-radius:1.25rem;margin-bottom:1rem;background:linear-gradient(135deg,#1a2f7a,#293C8E);box-shadow:0 4px 20px rgba(41,60,142,0.35);">
                 <img src="https://euroshipspain.com/wp-content/uploads/2025/08/cropped-logo_euroship-1-270x270.png"
                      alt="Euroship" style="width:4rem;height:4rem;object-fit:contain;"
