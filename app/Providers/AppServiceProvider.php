@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,7 +15,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Aplicar locale del usuario autenticado si existe.
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         if (Auth::check() && ! empty(Auth::user()->locale)) {
             App::setLocale(Auth::user()->locale);
         }

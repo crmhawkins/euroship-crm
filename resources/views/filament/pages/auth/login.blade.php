@@ -97,5 +97,5 @@
 
     </div>
 
-    @livewire('notifications')
+
 </x-filament-panels::layout.base>
