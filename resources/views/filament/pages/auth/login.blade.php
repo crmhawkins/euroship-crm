@@ -1,12 +1,8 @@
-{{-- Forzar light mode en login (dark mode haría texto blanco sobre fondo blanco) --}}
-<script>
-    document.documentElement.classList.remove('dark');
-    var _origLoadDarkMode = window.loadDarkMode;
-    window.loadDarkMode = function() { document.documentElement.classList.remove('dark'); };
-</script>
-
-{{-- Overlay fijo: escapa completamente del contenedor Filament --}}
+{{-- Un solo root element para Livewire (wire:id se asigna al primer elemento del blade) --}}
 <div style="position:fixed;inset:0;display:flex;z-index:50;overflow:hidden;">
+
+{{-- Script dentro del root div: dark mode no puede ser el root o Livewire pierde el form --}}
+<script>document.documentElement.classList.remove('dark');window.loadDarkMode=function(){document.documentElement.classList.remove('dark');};</script>
 
     {{-- ===== Panel izquierdo: branding ===== --}}
     <div class="hidden lg:flex flex-col items-center justify-center relative overflow-hidden"
