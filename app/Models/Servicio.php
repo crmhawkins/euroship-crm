@@ -22,6 +22,7 @@ class Servicio extends Model
         'kg',
         'llegada',
         'comentarios',
+        'enlace',
         'entrada',
         'facturado',
         'incidencia',

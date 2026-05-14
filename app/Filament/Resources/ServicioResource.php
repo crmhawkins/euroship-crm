@@ -186,6 +186,14 @@ class ServicioResource extends Resource
                                         ->label(__('Comentarios'))
                                         ->rows(3)
                                         ->columnSpanFull(),
+
+                                    Forms\Components\TextInput::make('enlace')
+                                        ->label(__('Enlace'))
+                                        ->url()
+                                        ->placeholder('https://')
+                                        ->maxLength(2048)
+                                        ->suffixIcon('heroicon-m-arrow-top-right-on-square')
+                                        ->columnSpanFull(),
                                 ])->columns(2),
                         ]),
                 ]),
@@ -222,7 +230,11 @@ class ServicioResource extends Resource
                     ->label(__('Tracking'))
                     ->searchable()
                     ->copyable()
-                    ->fontFamily('mono'),
+                    ->fontFamily('mono')
+                    ->url(fn (Servicio $record): ?string => $record->enlace ?: null)
+                    ->openUrlInNewTab()
+                    ->icon(fn (Servicio $record): ?string => $record->enlace ? 'heroicon-m-arrow-top-right-on-square' : null)
+                    ->color(fn (Servicio $record): ?string => $record->enlace ? 'primary' : null),
 
                 Tables\Columns\TextColumn::make('bx')
                     ->label(__('BX'))

@@ -19,6 +19,7 @@ class Presupuesto extends Model
         'fecha_presupuesto',
         'estado',
         'notas',
+        'enlace',
     ];
 
     protected function casts(): array

@@ -121,6 +121,14 @@ class PresupuestoResource extends Resource
                                             ->default('ofertado')
                                             ->required()
                                             ->columnSpanFull(),
+
+                                        Forms\Components\TextInput::make('enlace')
+                                            ->label(__('Enlace'))
+                                            ->url()
+                                            ->placeholder('https://')
+                                            ->maxLength(2048)
+                                            ->suffixIcon('heroicon-m-arrow-top-right-on-square')
+                                            ->columnSpanFull(),
                                     ]),
                             ]),
 
@@ -217,7 +225,11 @@ class PresupuestoResource extends Resource
                     ->label(__('Número'))
                     ->searchable()
                     ->sortable()
-                    ->weight('medium'),
+                    ->weight('medium')
+                    ->url(fn (Presupuesto $record): ?string => $record->enlace ?: null)
+                    ->openUrlInNewTab()
+                    ->icon(fn (Presupuesto $record): ?string => $record->enlace ? 'heroicon-m-arrow-top-right-on-square' : null)
+                    ->color(fn (Presupuesto $record): ?string => $record->enlace ? 'primary' : null),
 
                 Tables\Columns\TextColumn::make('fecha_presupuesto')
                     ->label(__('Fecha'))

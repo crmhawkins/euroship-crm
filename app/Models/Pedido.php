@@ -18,6 +18,7 @@ class Pedido extends Model
         'numero_pedido',
         'fecha_pedido',
         'puerto_entrega',
+        'enlace',
         'notas',
         'estado_general',
     ];

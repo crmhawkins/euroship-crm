@@ -144,6 +144,13 @@ class PedidoResource extends Resource
                                             ->required()
                                             ->maxLength(255)
                                             ->columnSpanFull(),
+                                        Forms\Components\TextInput::make('enlace')
+                                            ->label(__('Enlace'))
+                                            ->url()
+                                            ->placeholder('https://')
+                                            ->maxLength(2048)
+                                            ->suffixIcon('heroicon-m-arrow-top-right-on-square')
+                                            ->columnSpanFull(),
                                         Forms\Components\Select::make('estado_general')
                                             ->label(__('Estado'))
                                             ->options([
@@ -227,7 +234,11 @@ class PedidoResource extends Resource
                     ->label(__('Número'))
                     ->searchable()
                     ->sortable()
-                    ->weight('medium'),
+                    ->weight('medium')
+                    ->url(fn (Pedido $record): ?string => $record->enlace ?: null)
+                    ->openUrlInNewTab()
+                    ->icon(fn (Pedido $record): ?string => $record->enlace ? 'heroicon-m-arrow-top-right-on-square' : null)
+                    ->color(fn (Pedido $record): ?string => $record->enlace ? 'primary' : null),
                 Tables\Columns\TextColumn::make('fecha_pedido')
                     ->label(__('Fecha'))
                     ->date('d/m/Y')
