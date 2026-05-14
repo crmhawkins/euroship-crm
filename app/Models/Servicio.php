@@ -59,14 +59,4 @@ class Servicio extends Model
         return $this->belongsTo(EstatusAduanero::class, 'estatus_aduanero_id');
     }
 
-    public function getColorFila(): string
-    {
-        if ($this->incidencia) {
-            return 'danger';
-        }
-        if ($this->llegada !== null) {
-            return 'success';
-        }
-        return 'gray';
-    }
 }

@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'dani@hawkins.es'],
             [
                 'name' => 'Dani Hawkins',
-                'password' => Hash::make('Hawkins2025!'),
+                'password' => Hash::make(env('SEED_PASS_DANI_H', 'Hawkins2025!')),
                 'locale' => 'es',
                 'email_verified_at' => now(),
             ]
@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'dani.mefle@hawkins.es'],
             [
                 'name' => 'Dani Mefle',
-                'password' => Hash::make('Euroship@2026'),
+                'password' => Hash::make(env('SEED_PASS_DANI_M', 'Euroship@2026')),
                 'locale' => 'es',
                 'email_verified_at' => now(),
             ]
@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'juancarlos@euroship.es'],
             [
                 'name' => 'Juan Carlos Euroship',
-                'password' => Hash::make('Euroship2025!'),
+                'password' => Hash::make(env('SEED_PASS_JC', 'Euroship2025!')),
                 'locale' => 'es',
                 'email_verified_at' => now(),
             ]

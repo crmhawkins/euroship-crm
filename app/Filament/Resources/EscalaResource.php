@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EscalaResource\Pages;
 use App\Models\Escala;
+use App\Models\Puerto;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -65,11 +66,11 @@ class EscalaResource extends Resource
                 Forms\Components\Section::make(__('Puerto'))
                     ->icon('heroicon-o-map-pin')
                     ->schema([
-                        Forms\Components\TextInput::make('puerto')
+                        Forms\Components\Select::make('puerto')
                             ->label(__('Puerto'))
-                            ->placeholder('Algeciras, Valencia, Barcelona...')
+                            ->options(fn () => Puerto::activos()->orderBy('nombre')->pluck('nombre', 'nombre'))
+                            ->searchable()
                             ->required()
-                            ->maxLength(255)
                             ->columnSpanFull(),
                     ]),
             ]),

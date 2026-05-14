@@ -48,9 +48,19 @@ class Presupuesto extends Model
     {
         static::creating(function (Presupuesto $presupuesto) {
             if (empty($presupuesto->numero_presupuesto)) {
-                $year = now()->year;
-                $last = static::whereYear('created_at', $year)->count();
-                $presupuesto->numero_presupuesto = sprintf('PRES-%d-%03d', $year, $last + 1);
+                \Illuminate\Support\Facades\DB::transaction(function () use ($presupuesto) {
+                    $year = now()->year;
+                    $last = static::whereYear('created_at', $year)
+                        ->lockForUpdate()
+                        ->orderByDesc('id')
+                        ->value('numero_presupuesto');
+
+                    $seq = $last
+                        ? ((int) substr($last, strrpos($last, '-') + 1)) + 1
+                        : 1;
+
+                    $presupuesto->numero_presupuesto = sprintf('PRES-%d-%03d', $year, $seq);
+                });
             }
         });
     }
