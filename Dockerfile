@@ -1,5 +1,5 @@
 # Euroship CRM — Laravel 11 + Filament 3 en producción
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # Paquetes del sistema y extensiones PHP necesarias
 RUN apt-get update && apt-get install -y --no-install-recommends \
