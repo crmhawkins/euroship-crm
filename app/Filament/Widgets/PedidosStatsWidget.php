@@ -47,7 +47,7 @@ class PedidosStatsWidget extends BaseWidget
                 ->color('success'),
 
             Stat::make(__('Entregas hoy'), $entregasHoy)
-                ->description(__('Pertrechos entregados en las últimas 24 h'))
+                ->description(__('Pertrechos marcados como entregados hoy'))
                 ->descriptionIcon('heroicon-m-truck')
                 ->chart($entregasSemana ?: [0, 0, 0, 0, 0, 0, 0])
                 ->color('primary'),

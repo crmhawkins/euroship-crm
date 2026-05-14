@@ -1,7 +1,7 @@
 {
-  "tool_name": "Read",
-  "tool_input_preview": "{\"file_path\":\"C:\\\\Users\\\\Dani-Mefle\\\\.claude\\\\projects\\\\C--Users-Dani-Mefle\\\\memory\\\\Euroship-CRM.md\"}",
-  "error": "File does not exist. Note: your current working directory is C:\\tmp\\euroship-crm.",
-  "timestamp": "2026-05-14T09:46:17.878Z",
+  "tool_name": "Grep",
+  "tool_input_preview": "{\"pattern\":\"globe-europe-africa\",\"path\":\"C:\\\\tmp\\\\euroship-crm\\\\vendor\\\\blade-ui-kit\",\"output_mode\":\"files_with_matches\",\"head_limit\":3}",
+  "error": "Ripgrep search timed out after 20 seconds. The search may have matched files but did not complete in time. Try searching a more specific path or pattern.",
+  "timestamp": "2026-05-14T13:53:11.729Z",
   "retry_count": 1
 }

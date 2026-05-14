@@ -350,6 +350,11 @@ class ServicioResource extends Resource
             ->emptyStateIcon('heroicon-o-inbox-arrow-down');
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with(['escala.barco.cliente', 'courier', 'ubicacion', 'estatusAduanero']);
+    }
+
     public static function getPages(): array
     {
         return [

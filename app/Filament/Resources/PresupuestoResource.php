@@ -311,6 +311,11 @@ class PresupuestoResource extends Resource
             ->emptyStateIcon('heroicon-o-calculator');
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with(['escala.barco.cliente', 'lineas']);
+    }
+
     public static function getPages(): array
     {
         return [

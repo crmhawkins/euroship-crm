@@ -159,6 +159,8 @@ class PedidoResource extends Resource
                                                 'entregado'  => __('Entregado'),
                                             ])
                                             ->default('pendiente')
+                                            ->disabled()
+                                            ->dehydrated(false)
                                             ->helperText(__('Se recalcula automáticamente según los pertrechos.'))
                                             ->columnSpanFull(),
                                     ]),
@@ -324,6 +326,11 @@ class PedidoResource extends Resource
             ->emptyStateHeading(__('Sin pedidos'))
             ->emptyStateDescription(__('Crea el primer pedido vinculado a una escala.'))
             ->emptyStateIcon('heroicon-o-clipboard-document-list');
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with(['escala.barco.cliente']);
     }
 
     public static function getPages(): array

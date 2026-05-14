@@ -27,7 +27,7 @@ class SetUserLocale
         }
 
         // 2) Resuelve locale: user → sesión → config.
-        $locale = Auth::user()->locale ?? Session::get('locale') ?? config('app.locale');
+        $locale = Auth::user()?->locale ?? Session::get('locale') ?? config('app.locale');
         if (! in_array($locale, $supported, true)) {
             $locale = config('app.locale');
         }
