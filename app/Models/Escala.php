@@ -37,6 +37,16 @@ class Escala extends Model
         return $this->hasMany(Pedido::class);
     }
 
+    public function servicios(): HasMany
+    {
+        return $this->hasMany(Servicio::class);
+    }
+
+    public function presupuestos(): HasMany
+    {
+        return $this->hasMany(Presupuesto::class);
+    }
+
     public function getLabelAttribute(): string
     {
         $fecha = $this->fecha?->format('Y-m-d') ?? '—';

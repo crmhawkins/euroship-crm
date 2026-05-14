@@ -197,6 +197,26 @@ class PedidoResource extends Resource
                         'parcial'   => __('Parcial'),
                         'entregado' => __('Entregado'),
                     ]),
+
+                Tables\Filters\SelectFilter::make('escala_id')
+                    ->label(__('Escala'))
+                    ->options(fn () => \App\Models\Escala::with('barco')
+                        ->orderBy('fecha', 'desc')
+                        ->get()
+                        ->mapWithKeys(fn ($e) => [
+                            $e->id => ($e->barco?->nombre ?? '—') . ' — ' . $e->puerto . ' (' . ($e->fecha?->format('d/m/Y') ?? '—') . ')',
+                        ]))
+                    ->searchable(),
+
+                Tables\Filters\SelectFilter::make('barco')
+                    ->label(__('Barco'))
+                    ->relationship('escala.barco', 'nombre')
+                    ->searchable(),
+
+                Tables\Filters\SelectFilter::make('cliente')
+                    ->label(__('Cliente'))
+                    ->relationship('escala.barco.cliente', 'nombre')
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -217,5 +237,10 @@ class PedidoResource extends Resource
             'view'   => Pages\ViewPedido::route('/{record}'),
             'edit'   => Pages\EditPedido::route('/{record}/edit'),
         ];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['numero_pedido', 'puerto_entrega', 'escala.barco.nombre', 'escala.barco.cliente.nombre', 'escala.puerto'];
     }
 }

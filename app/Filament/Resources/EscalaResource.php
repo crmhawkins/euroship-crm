@@ -73,6 +73,18 @@ class EscalaResource extends Resource
                     ->label(__('Pedidos'))
                     ->counts('pedidos')
                     ->badge(),
+
+                Tables\Columns\TextColumn::make('servicios_count')
+                    ->label(__('Servicios'))
+                    ->counts('servicios')
+                    ->badge()
+                    ->color('info'),
+
+                Tables\Columns\TextColumn::make('presupuestos_count')
+                    ->label(__('Presupuestos'))
+                    ->counts('presupuestos')
+                    ->badge()
+                    ->color('warning'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('barco_id')
@@ -81,6 +93,12 @@ class EscalaResource extends Resource
                     ->searchable(),
             ])
             ->actions([
+                Tables\Actions\Action::make('reporte_pendientes')
+                    ->label(__('Pendientes'))
+                    ->icon('heroicon-o-document-text')
+                    ->color('warning')
+                    ->url(fn (Escala $record) => route('escala.reporte-pendientes', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
