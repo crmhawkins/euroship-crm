@@ -7,6 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -33,13 +34,23 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('2rem')
             ->favicon('https://euroshipspain.com/wp-content/uploads/2025/08/cropped-logo_euroship-1-270x270.png')
             ->colors([
-                'primary'  => Color::hex('#293C8E'),
+                'primary'   => Color::hex('#293C8E'),
                 'secondary' => Color::hex('#29A6DF'),
-                'warning'  => Color::hex('#F3903F'),
-                'gray'     => Color::Slate,
-                'danger'   => Color::Red,
-                'success'  => Color::Emerald,
-                'info'     => Color::Sky,
+                'warning'   => Color::hex('#F3903F'),
+                'gray'      => Color::Slate,
+                'danger'    => Color::Red,
+                'success'   => Color::Emerald,
+                'info'      => Color::Sky,
+            ])
+            ->sidebarCollapsibleOnDesktop()
+            ->navigationGroups([
+                NavigationGroup::make('Maestros')
+                    ->icon('heroicon-o-identification'),
+                NavigationGroup::make('Operaciones')
+                    ->icon('heroicon-o-rectangle-stack'),
+                NavigationGroup::make('Configuración')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->collapsed(),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

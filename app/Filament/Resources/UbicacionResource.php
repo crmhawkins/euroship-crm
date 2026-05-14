@@ -20,15 +20,25 @@ class UbicacionResource extends Resource
 
     protected static ?int $navigationSort = 92;
 
-    public static function getNavigationLabel(): string { return 'Ubicaciones'; }
-    public static function getModelLabel(): string { return 'Ubicación'; }
-    public static function getPluralModelLabel(): string { return 'Ubicaciones'; }
+    public static function getNavigationLabel(): string { return __('Ubicaciones'); }
+    public static function getModelLabel(): string { return __('Ubicación'); }
+    public static function getPluralModelLabel(): string { return __('Ubicaciones'); }
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('nombre')->required()->maxLength(150)->unique(ignoreRecord: true),
-            Forms\Components\Toggle::make('activo')->default(true)->inline(false),
+            Forms\Components\TextInput::make('nombre')
+                ->label(__('Nombre de la ubicación'))
+                ->placeholder('Almacén A · Estantería 3 · Patio...')
+                ->required()
+                ->maxLength(150)
+                ->unique(ignoreRecord: true)
+                ->columnSpan(1),
+            Forms\Components\Toggle::make('activo')
+                ->label(__('Activo'))
+                ->default(true)
+                ->onColor('success')
+                ->inline(false),
         ])->columns(2);
     }
 
@@ -36,18 +46,29 @@ class UbicacionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nombre')->searchable()->sortable(),
-                Tables\Columns\IconColumn::make('activo')->boolean()->sortable(),
+                Tables\Columns\TextColumn::make('nombre')
+                    ->label(__('Nombre'))
+                    ->searchable()
+                    ->sortable()
+                    ->weight('medium'),
+                Tables\Columns\IconColumn::make('activo')
+                    ->label(__('Activo'))
+                    ->boolean()
+                    ->sortable()
+                    ->alignCenter(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('activo'),
+                Tables\Filters\TernaryFilter::make('activo')->label(__('Activo')),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->iconButton()->tooltip(__('Editar')),
+                Tables\Actions\DeleteAction::make()->iconButton()->tooltip(__('Eliminar')),
             ])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make()])
-            ->defaultSort('nombre');
+            ->defaultSort('nombre')
+            ->emptyStateHeading(__('Sin ubicaciones'))
+            ->emptyStateDescription(__('Crea ubicaciones para localizar la mercancía dentro del almacén.'))
+            ->emptyStateIcon('heroicon-o-archive-box');
     }
 
     public static function getPages(): array

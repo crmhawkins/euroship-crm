@@ -14,21 +14,33 @@ class OperacionesStatsWidget extends BaseWidget
     protected function getStats(): array
     {
         try {
-            $presupuestosPend    = Presupuesto::where('estado', 'ofertado')->count();
-            $serviciosSinLlegada = Servicio::whereNull('llegada')->count();
+            $presupuestosPend     = Presupuesto::where('estado', 'ofertado')->count();
+            $presupuestosAceptados = Presupuesto::where('estado', 'aceptado')->count();
+            $serviciosSinLlegada  = Servicio::whereNull('llegada')->count();
+            $serviciosIncidencia  = Servicio::where('incidencia', true)->count();
         } catch (\Throwable $e) {
-            $presupuestosPend = $serviciosSinLlegada = '—';
+            $presupuestosPend = $presupuestosAceptados = $serviciosSinLlegada = $serviciosIncidencia = '—';
         }
 
         return [
             Stat::make(__('Presupuestos ofertados'), $presupuestosPend)
-                ->description(__('Pendientes de respuesta'))
+                ->description(__('Pendientes de respuesta del cliente'))
                 ->descriptionIcon('heroicon-m-calculator')
-                ->color('info'),
+                ->color('warning'),
+
+            Stat::make(__('Presupuestos aceptados'), $presupuestosAceptados)
+                ->description(__('Presupuestos confirmados'))
+                ->descriptionIcon('heroicon-m-check-badge')
+                ->color('success'),
 
             Stat::make(__('Servicios sin llegada'), $serviciosSinLlegada)
                 ->description(__('Conocimientos pendientes de recibir'))
                 ->descriptionIcon('heroicon-m-inbox-arrow-down')
+                ->color('info'),
+
+            Stat::make(__('Servicios con incidencia'), $serviciosIncidencia)
+                ->description(__('Requieren atención'))
+                ->descriptionIcon('heroicon-m-exclamation-triangle')
                 ->color('danger'),
         ];
     }

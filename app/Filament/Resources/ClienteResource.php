@@ -16,6 +16,8 @@ class ClienteResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
+    protected static ?string $navigationGroup = 'Maestros';
+
     protected static ?int $navigationSort = 10;
 
     public static function getNavigationLabel(): string
@@ -35,28 +37,53 @@ class ClienteResource extends Resource
 
     public static function form(Form $form): Form
     {
+        // Layout plan:
+        // Row 1 (Grid 2): [Identificación] [Contacto]
+        // Row 2 (full width): Notas (collapsible)
         return $form->schema([
-            Forms\Components\Section::make(__('Datos del cliente'))->schema([
-                Forms\Components\TextInput::make('nombre')
-                    ->label(__('Nombre'))
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label(__('Email'))
-                    ->email()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('telefono')
-                    ->label(__('Teléfono'))
-                    ->tel()
-                    ->maxLength(50),
-                Forms\Components\TextInput::make('direccion')
-                    ->label(__('Dirección'))
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('notas')
-                    ->label(__('Notas'))
-                    ->rows(3)
-                    ->columnSpanFull(),
-            ])->columns(2),
+            Forms\Components\Grid::make(2)->schema([
+                Forms\Components\Section::make(__('Identificación'))
+                    ->icon('heroicon-o-identification')
+                    ->schema([
+                        Forms\Components\TextInput::make('nombre')
+                            ->label(__('Nombre comercial'))
+                            ->placeholder('Naviera Mediterráneo, S.L.')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('direccion')
+                            ->label(__('Dirección fiscal'))
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                    ]),
+
+                Forms\Components\Section::make(__('Contacto'))
+                    ->icon('heroicon-o-phone')
+                    ->schema([
+                        Forms\Components\TextInput::make('email')
+                            ->label(__('Email'))
+                            ->email()
+                            ->prefixIcon('heroicon-o-envelope')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('telefono')
+                            ->label(__('Teléfono'))
+                            ->tel()
+                            ->prefixIcon('heroicon-o-phone')
+                            ->maxLength(50),
+                    ]),
+            ]),
+
+            Forms\Components\Section::make(__('Notas internas'))
+                ->icon('heroicon-o-pencil-square')
+                ->schema([
+                    Forms\Components\Textarea::make('notas')
+                        ->hiddenLabel()
+                        ->rows(4)
+                        ->placeholder(__('Observaciones, condiciones especiales, contactos secundarios...'))
+                        ->columnSpanFull(),
+                ])
+                ->collapsible()
+                ->collapsed(),
         ]);
     }
 
@@ -64,27 +91,52 @@ class ClienteResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nombre')->label(__('Nombre'))->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('email')->label(__('Email'))->searchable()->toggleable(),
-                Tables\Columns\TextColumn::make('telefono')->label(__('Teléfono'))->toggleable(),
+                Tables\Columns\TextColumn::make('nombre')
+                    ->label(__('Cliente'))
+                    ->searchable()
+                    ->sortable()
+                    ->weight('medium'),
+                Tables\Columns\TextColumn::make('email')
+                    ->label(__('Email'))
+                    ->icon('heroicon-m-envelope')
+                    ->copyable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('telefono')
+                    ->label(__('Teléfono'))
+                    ->icon('heroicon-m-phone')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('barcos_count')
                     ->label(__('Barcos'))
                     ->counts('barcos')
-                    ->badge(),
+                    ->badge()
+                    ->color('info')
+                    ->alignCenter(),
+                Tables\Columns\TextColumn::make('direccion')
+                    ->label(__('Dirección'))
+                    ->limit(40)
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Creado'))
-                    ->dateTime('Y-m-d')
+                    ->label(__('Alta'))
+                    ->date('d/m/Y')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make()->iconButton()->tooltip(__('Ver')),
+                Tables\Actions\EditAction::make()->iconButton()->tooltip(__('Editar')),
+                Tables\Actions\DeleteAction::make()->iconButton()->tooltip(__('Eliminar')),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ])
-            ->defaultSort('nombre');
+            ->defaultSort('nombre')
+            ->emptyStateHeading(__('Sin clientes'))
+            ->emptyStateDescription(__('Crea el primer cliente para empezar a registrar barcos y escalas.'))
+            ->emptyStateIcon('heroicon-o-building-office-2');
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['nombre', 'email', 'telefono'];
     }
 
     public static function getPages(): array

@@ -21,25 +21,35 @@ class PedidosStatsWidget extends BaseWidget
             ->whereDate('updated_at', today())
             ->count();
 
+        $entregasSemana = Pertrecho::where('estado', 'entregado')
+            ->whereBetween('updated_at', [now()->subDays(6)->startOfDay(), now()->endOfDay()])
+            ->selectRaw('DATE(updated_at) as d, COUNT(*) as c')
+            ->groupBy('d')
+            ->orderBy('d')
+            ->pluck('c')
+            ->all();
+
         return [
             Stat::make(__('Pedidos pendientes'), $pendientes)
-                ->description(__('Pedidos sin iniciar entrega'))
+                ->description(__('Sin iniciar entrega'))
                 ->descriptionIcon('heroicon-m-clock')
-                ->color('warning'),
+                ->color('warning')
+                ->icon('heroicon-o-clipboard-document-list'),
 
             Stat::make(__('Pedidos parciales'), $parciales)
-                ->description(__('Pedidos con entrega parcial'))
+                ->description(__('Con entrega parcial'))
                 ->descriptionIcon('heroicon-m-arrow-path')
                 ->color('info'),
 
             Stat::make(__('Pedidos entregados'), $entregados)
-                ->description(__('Totalmente entregados'))
+                ->description(__('Totalmente completados'))
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success'),
 
             Stat::make(__('Entregas hoy'), $entregasHoy)
-                ->description(__('Pertrechos marcados como entregados hoy'))
+                ->description(__('Pertrechos entregados en las últimas 24 h'))
                 ->descriptionIcon('heroicon-m-truck')
+                ->chart($entregasSemana ?: [0, 0, 0, 0, 0, 0, 0])
                 ->color('primary'),
         ];
     }

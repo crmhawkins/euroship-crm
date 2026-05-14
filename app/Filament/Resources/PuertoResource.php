@@ -14,21 +14,31 @@ class PuertoResource extends Resource
 {
     protected static ?string $model = Puerto::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-map-pin';
+    protected static ?string $navigationIcon = 'heroicon-o-building-library';
 
     protected static ?string $navigationGroup = 'Configuración';
 
     protected static ?int $navigationSort = 91;
 
-    public static function getNavigationLabel(): string { return 'Puertos'; }
-    public static function getModelLabel(): string { return 'Puerto'; }
-    public static function getPluralModelLabel(): string { return 'Puertos'; }
+    public static function getNavigationLabel(): string { return __('Puertos'); }
+    public static function getModelLabel(): string { return __('Puerto'); }
+    public static function getPluralModelLabel(): string { return __('Puertos'); }
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('nombre')->required()->maxLength(150)->unique(ignoreRecord: true),
-            Forms\Components\Toggle::make('activo')->default(true)->inline(false),
+            Forms\Components\TextInput::make('nombre')
+                ->label(__('Nombre del puerto'))
+                ->placeholder('Algeciras, Valencia, Barcelona...')
+                ->required()
+                ->maxLength(150)
+                ->unique(ignoreRecord: true)
+                ->columnSpan(1),
+            Forms\Components\Toggle::make('activo')
+                ->label(__('Activo'))
+                ->default(true)
+                ->onColor('success')
+                ->inline(false),
         ])->columns(2);
     }
 
@@ -36,18 +46,29 @@ class PuertoResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nombre')->searchable()->sortable(),
-                Tables\Columns\IconColumn::make('activo')->boolean()->sortable(),
+                Tables\Columns\TextColumn::make('nombre')
+                    ->label(__('Nombre'))
+                    ->searchable()
+                    ->sortable()
+                    ->weight('medium'),
+                Tables\Columns\IconColumn::make('activo')
+                    ->label(__('Activo'))
+                    ->boolean()
+                    ->sortable()
+                    ->alignCenter(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('activo'),
+                Tables\Filters\TernaryFilter::make('activo')->label(__('Activo')),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->iconButton()->tooltip(__('Editar')),
+                Tables\Actions\DeleteAction::make()->iconButton()->tooltip(__('Eliminar')),
             ])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make()])
-            ->defaultSort('nombre');
+            ->defaultSort('nombre')
+            ->emptyStateHeading(__('Sin puertos'))
+            ->emptyStateDescription(__('Añade los puertos donde operáis.'))
+            ->emptyStateIcon('heroicon-o-building-library');
     }
 
     public static function getPages(): array
