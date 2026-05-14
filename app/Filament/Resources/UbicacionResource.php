@@ -14,7 +14,7 @@ class UbicacionResource extends Resource
 {
     protected static ?string $model = Ubicacion::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-warehouse';
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
     protected static ?string $navigationGroup = 'Configuración';
 

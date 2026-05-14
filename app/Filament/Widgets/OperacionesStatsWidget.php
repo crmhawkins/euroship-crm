@@ -14,9 +14,13 @@ class OperacionesStatsWidget extends BaseWidget
 
     protected function getStats(): array
     {
-        $pedidosPendParcial = Pedido::whereIn('estado_general', ['pendiente', 'parcial'])->count();
-        $presupuestosPend   = Presupuesto::where('estado', 'ofertado')->count();
-        $serviciosSinLlegada = Servicio::whereNull('llegada')->count();
+        try {
+            $pedidosPendParcial  = Pedido::whereIn('estado_general', ['pendiente', 'parcial'])->count();
+            $presupuestosPend    = Presupuesto::where('estado', 'ofertado')->count();
+            $serviciosSinLlegada = Servicio::whereNull('llegada')->count();
+        } catch (\Throwable $e) {
+            $pedidosPendParcial = $presupuestosPend = $serviciosSinLlegada = '—';
+        }
 
         return [
             Stat::make(__('Pedidos pendientes/parciales'), $pedidosPendParcial)
