@@ -44,7 +44,7 @@
 
 <div class="header">
     <div class="logo-area">
-        <img src="https://euroshipspain.com/wp-content/uploads/2025/08/cropped-logo_euroship-1-270x270.png" alt="Euroship">
+        @include('pdf.partials.logo')
     </div>
     <div class="company-info">
         <strong>EUROSHIP SPAIN</strong><br>

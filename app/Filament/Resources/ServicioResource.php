@@ -229,7 +229,6 @@ class ServicioResource extends Resource
                 Tables\Columns\TextColumn::make('number')
                     ->label(__('Tracking'))
                     ->searchable()
-                    ->copyable()
                     ->fontFamily('mono')
                     ->url(fn (Servicio $record): ?string => $record->enlace ?: null)
                     ->openUrlInNewTab()
@@ -315,6 +314,12 @@ class ServicioResource extends Resource
                 Tables\Filters\SelectFilter::make('barco')
                     ->label(__('Barco'))
                     ->relationship('escala.barco', 'nombre')
+                    ->searchable()
+                    ->preload(),
+
+                Tables\Filters\SelectFilter::make('cliente')
+                    ->label(__('Cliente'))
+                    ->relationship('escala.barco.cliente', 'nombre')
                     ->searchable()
                     ->preload(),
 

@@ -298,6 +298,18 @@ class PresupuestoResource extends Resource
                             $e->id => $e->barco?->nombre . ' — ' . $e->puerto . ' (' . ($e->fecha?->format('d/m/Y') ?? '—') . ')',
                         ]))
                     ->searchable(),
+
+                Tables\Filters\SelectFilter::make('barco')
+                    ->label(__('Barco'))
+                    ->relationship('escala.barco', 'nombre')
+                    ->searchable()
+                    ->preload(),
+
+                Tables\Filters\SelectFilter::make('cliente')
+                    ->label(__('Cliente'))
+                    ->relationship('escala.barco.cliente', 'nombre')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->iconButton()->tooltip(__('Ver')),
