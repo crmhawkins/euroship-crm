@@ -1,126 +1,155 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nota de Entrega</title>
+    <title>Delivery Note</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: DejaVu Sans, sans-serif; font-size: 11px; color: #1a1a1a; }
+        body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #111; }
 
-        .header { display: flex; justify-content: space-between; align-items: flex-start; padding: 20px 30px; border-bottom: 3px solid #293C8E; margin-bottom: 20px; }
-        .logo-area img { height: 60px; }
-        .company-info { text-align: right; font-size: 10px; color: #555; }
-        .company-info strong { font-size: 14px; color: #293C8E; }
+        .header { padding: 18px 30px 14px; border-bottom: 3px solid #1E3A8A; }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .company-block { text-align: right; font-size: 9px; color: #555; line-height: 1.6; }
+        .company-name { font-size: 13px; font-weight: bold; color: #1E3A8A; display: block; margin-bottom: 2px; }
 
-        .title-bar { background: #293C8E; color: white; padding: 8px 30px; font-size: 14px; font-weight: bold; letter-spacing: 1px; margin-bottom: 20px; }
+        .title-bar { background: #1E3A8A; color: #fff; padding: 7px 30px; font-size: 14px; font-weight: bold; letter-spacing: 3px; margin-bottom: 16px; }
 
-        .section { padding: 0 30px; margin-bottom: 18px; }
-        .section-title { font-size: 10px; font-weight: bold; text-transform: uppercase; color: #293C8E; border-bottom: 1px solid #293C8E; padding-bottom: 3px; margin-bottom: 10px; }
+        .info-row { display: flex; margin: 0 30px 14px; border: 1.5px solid #cbd5e1; }
+        .info-cell { flex: 1; padding: 8px 12px; border-right: 1px solid #cbd5e1; }
+        .info-cell:last-child { border-right: none; }
+        .info-label { font-size: 8px; font-weight: bold; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 3px; }
+        .info-value { font-size: 12px; font-weight: bold; color: #111; }
 
-        .grid-2 { display: flex; gap: 20px; }
-        .grid-2 .col { flex: 1; }
-        .field { margin-bottom: 6px; }
-        .field label { font-size: 9px; color: #888; text-transform: uppercase; display: block; }
-        .field span { font-size: 11px; font-weight: 600; }
+        .remarks-block { margin: 0 30px 14px; padding: 8px 12px; border-left: 3px solid #1E3A8A; background: #f0f4ff; }
+        .remarks-label { font-size: 8px; font-weight: bold; color: #1E3A8A; text-transform: uppercase; margin-bottom: 4px; }
+        .remarks-text { font-size: 10px; color: #333; }
+
+        .section { margin: 0 30px 16px; }
+        .section-head { font-size: 8px; font-weight: bold; color: #1E3A8A; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #1E3A8A; padding-bottom: 3px; margin-bottom: 8px; }
 
         table { width: 100%; border-collapse: collapse; }
-        table th { background: #293C8E; color: white; padding: 6px 8px; text-align: left; font-size: 9px; text-transform: uppercase; }
-        table td { padding: 6px 8px; border-bottom: 1px solid #e5e5e5; font-size: 10px; }
-        table tr:nth-child(even) td { background: #f8f9ff; }
+        table thead th { background: #1E3A8A; color: #fff; padding: 5px 8px; text-align: left; font-size: 8px; font-weight: bold; text-transform: uppercase; }
+        table thead th.center { text-align: center; }
+        table thead th.right { text-align: right; }
+        table tbody td { padding: 5px 8px; border-bottom: 1px solid #e5e7eb; font-size: 9px; vertical-align: middle; }
+        table tbody td.center { text-align: center; }
+        table tbody td.right { text-align: right; }
+        table tbody tr:nth-child(even) td { background: #f8faff; }
+        table tfoot td { padding: 5px 8px; border-top: 2px solid #1E3A8A; font-size: 9px; font-weight: bold; background: #e8eeff; }
+        table tfoot td.center { text-align: center; }
+        table tfoot td.right { text-align: right; }
 
-        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: bold; }
-        .badge-ok { background: #d1fae5; color: #065f46; }
-        .badge-pending { background: #fef3c7; color: #92400e; }
-        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .checkboxes { margin: 0 30px 20px; }
+        .checkbox-row { display: flex; gap: 30px; margin-top: 8px; }
+        .cb-item { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .cb-box { width: 13px; height: 13px; border: 1.5px solid #374151; display: inline-block; flex-shrink: 0; }
 
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 30px; border-top: 1px solid #ddd; display: flex; justify-content: space-between; font-size: 9px; color: #888; }
+        .sign-row { margin: 0 30px 20px; display: flex; justify-content: flex-end; }
+        .sign-box { border: 1px solid #9ca3af; padding: 35px 20px 8px; text-align: center; width: 220px; }
+        .sign-label { font-size: 9px; font-weight: bold; text-transform: uppercase; color: #555; letter-spacing: 0.5px; }
 
-        .sign-area { padding: 30px; display: flex; justify-content: space-between; margin-top: 30px; }
-        .sign-box { text-align: center; width: 45%; }
-        .sign-line { border-top: 1px solid #555; padding-top: 5px; font-size: 9px; color: #555; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 5px 30px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; font-size: 8px; color: #9ca3af; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <div class="logo-area">
-        @include('pdf.partials.logo')
-    </div>
-    <div class="company-info">
-        <strong>EUROSHIP SPAIN</strong><br>
-        Puerto de Algeciras<br>
-        info@euroshipspain.com
+    <div class="header-inner">
+        <div>
+            @include('pdf.partials.logo')
+        </div>
+        <div class="company-block">
+            <span class="company-name">EUROSHIP SUPPLIES INTERNATIONAL S.L.</span>
+            Calle Oc&eacute;ano Atl&aacute;ntico N&ordm; 6, Los Barrios (C&aacute;diz), Spain<br>
+            NIF: B72035900 &nbsp;|&nbsp; info@euroshipspain.com
+        </div>
     </div>
 </div>
 
-<div class="title-bar">NOTA DE ENTREGA</div>
+<div class="title-bar">DELIVERY NOTE</div>
+
+<div class="info-row">
+    <div class="info-cell" style="flex:2">
+        <span class="info-label">Vessel Name / Company Name</span>
+        <span class="info-value">{{ strtoupper($escala?->barco?->nombre ?? '&mdash;') }}</span>
+    </div>
+    <div class="info-cell">
+        <span class="info-label">Delivery At</span>
+        <span class="info-value">{{ strtoupper($escala?->puerto ?? '&mdash;') }}</span>
+    </div>
+    <div class="info-cell">
+        <span class="info-label">Date</span>
+        <span class="info-value">{{ $escala?->fecha?->format('d/m/Y') ?? '&mdash;' }}</span>
+    </div>
+</div>
+
+@if(!empty($escala?->remarks))
+<div class="remarks-block">
+    <div class="remarks-label">Remarks</div>
+    <div class="remarks-text">{{ $escala->remarks }}</div>
+</div>
+@endif
 
 <div class="section">
-    <div class="section-title">Datos de la escala</div>
-    <div class="grid-2">
-        <div class="col">
-            <div class="field"><label>Cliente</label><span>{{ $servicio->escala?->barco?->cliente?->nombre ?? '—' }}</span></div>
-            <div class="field"><label>Buque</label><span>{{ $servicio->escala?->barco?->nombre ?? '—' }}</span></div>
-        </div>
-        <div class="col">
-            <div class="field"><label>Puerto / Escala</label><span>{{ $servicio->escala?->puerto ?? '—' }}</span></div>
-            <div class="field"><label>Fecha escala</label><span>{{ $servicio->escala?->fecha?->format('d/m/Y') ?? '—' }}</span></div>
-        </div>
+    <div class="section-head">Shipment Details</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:30%">Narrative</th>
+                <th style="width:20%">Remark</th>
+                <th style="width:12%">Courier</th>
+                <th style="width:20%">AWB / Courier No.</th>
+                <th class="center" style="width:9%">BX</th>
+                <th class="right" style="width:9%">KG</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($servicios as $servicio)
+            <tr>
+                <td>{{ $servicio->comentarios ?? '' }}</td>
+                <td></td>
+                <td>{{ $servicio->courier?->nombre ?? '' }}</td>
+                <td style="font-size:8px;">{{ $servicio->number ?? '&mdash;' }}</td>
+                <td class="center">{{ $servicio->bx ?? '&mdash;' }}</td>
+                <td class="right">{{ $servicio->kg ?? '&mdash;' }}</td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="6" style="text-align:center;color:#aaa;padding:14px;">No shipment records found for this port call.</td>
+            </tr>
+            @endforelse
+        </tbody>
+        @if($servicios->count() > 1)
+        <tfoot>
+            <tr>
+                <td colspan="4">TOTAL</td>
+                <td class="center">{{ $servicios->sum('bx') }}</td>
+                <td class="right">{{ number_format((float)$servicios->sum('kg'), 2) }}</td>
+            </tr>
+        </tfoot>
+        @endif
+    </table>
+</div>
+
+<div class="checkboxes">
+    <div class="section-head">Additional Services</div>
+    <div class="checkbox-row">
+        <div class="cb-item"><span class="cb-box"></span> Overtime</div>
+        <div class="cb-item"><span class="cb-box"></span> Handling</div>
+        <div class="cb-item"><span class="cb-box"></span> Express</div>
+        <div class="cb-item"><span class="cb-box"></span> Crane Service</div>
     </div>
 </div>
 
-<div class="section">
-    <div class="section-title">Datos del conocimiento</div>
-    <div class="grid-2">
-        <div class="col">
-            <div class="field"><label>Courier</label><span>{{ $servicio->courier?->nombre ?? '—' }}</span></div>
-            <div class="field"><label>Number / Tracking</label><span>{{ $servicio->number ?? '—' }}</span></div>
-            <div class="field"><label>Fecha llegada</label><span>{{ $servicio->llegada?->format('d/m/Y') ?? 'Pendiente' }}</span></div>
-        </div>
-        <div class="col">
-            <div class="field"><label>Bultos (BX)</label><span>{{ $servicio->bx ?? '—' }}</span></div>
-            <div class="field"><label>Peso (KG)</label><span>{{ $servicio->kg ?? '—' }}</span></div>
-            <div class="field"><label>Estatus Aduanero</label><span>{{ $servicio->estatusAduanero?->nombre ?? '—' }}</span></div>
-        </div>
-    </div>
-</div>
-
-<div class="section">
-    <div class="section-title">Ubicación y observaciones</div>
-    <div class="grid-2">
-        <div class="col">
-            <div class="field"><label>Ubicación</label><span>{{ $servicio->ubicacion?->nombre ?? '—' }}</span></div>
-            <div class="field">
-                <label>Estado</label>
-                @if($servicio->incidencia)
-                    <span class="badge badge-danger">INCIDENCIA</span>
-                @elseif($servicio->llegada)
-                    <span class="badge badge-ok">RECIBIDO</span>
-                @else
-                    <span class="badge badge-pending">PENDIENTE</span>
-                @endif
-            </div>
-        </div>
-        <div class="col">
-            <div class="field"><label>Comentarios</label><span>{{ $servicio->comentarios ?? '—' }}</span></div>
-        </div>
-    </div>
-</div>
-
-<div class="sign-area">
+<div class="sign-row">
     <div class="sign-box">
-        <div style="height: 40px;"></div>
-        <div class="sign-line">Firma receptor</div>
-    </div>
-    <div class="sign-box">
-        <div style="height: 40px;"></div>
-        <div class="sign-line">Sello / Conforme</div>
+        <div class="sign-label">Signed &amp; Stamped</div>
     </div>
 </div>
 
 <div class="footer">
-    <span>Nota generada: {{ now()->format('d/m/Y H:i') }}</span>
-    <span>Euroship Spain — crm.euroshipspain.com</span>
+    <span>Generated: {{ now()->format('d/m/Y H:i') }}</span>
+    <span>Euroship Supplies International S.L. &nbsp;|&nbsp; crm.euroshipspain.com</span>
 </div>
 
 </body>

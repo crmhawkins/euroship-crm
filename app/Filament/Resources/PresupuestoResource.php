@@ -14,6 +14,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class PresupuestoResource extends Resource
 {
@@ -31,9 +32,6 @@ class PresupuestoResource extends Resource
 
     public static function form(Form $form): Form
     {
-        // Layout plan:
-        // Resumen placeholder en edit (Nº · Fecha · Líneas · Total · Estado)
-        // Tabs: General (Asignación + Datos lado a lado) | Líneas
         return $form->schema([
             Forms\Components\Placeholder::make('resumen')
                 ->label('')
@@ -192,7 +190,7 @@ class PresupuestoResource extends Resource
                                         ->columnSpanFull(),
                                 ])
                                 ->columns(5)
-                                ->defaultItems(1)
+                                ->defaultItems(0)
                                 ->reorderable(false)
                                 ->cloneable()
                                 ->itemLabel(function (array $state): ?string {
@@ -230,39 +228,32 @@ class PresupuestoResource extends Resource
                     ->openUrlInNewTab()
                     ->icon(fn (Presupuesto $record): ?string => $record->enlace ? 'heroicon-m-arrow-top-right-on-square' : null)
                     ->color(fn (Presupuesto $record): ?string => $record->enlace ? 'primary' : null),
-
                 Tables\Columns\TextColumn::make('fecha_presupuesto')
                     ->label(__('Fecha'))
                     ->date('d/m/Y')
                     ->sortable(),
-
                 Tables\Columns\TextColumn::make('escala.barco.cliente.nombre')
                     ->label(__('Cliente'))
                     ->searchable()
                     ->color('gray'),
-
                 Tables\Columns\TextColumn::make('escala.barco.nombre')
                     ->label(__('Barco'))
                     ->searchable(),
-
                 Tables\Columns\TextColumn::make('escala.puerto')
                     ->label(__('Escala'))
                     ->toggleable(isToggledHiddenByDefault: true),
-
                 Tables\Columns\TextColumn::make('lineas_count')
                     ->label(__('Líneas'))
                     ->counts('lineas')
                     ->badge()
                     ->color('gray')
                     ->alignCenter(),
-
                 Tables\Columns\TextColumn::make('total')
                     ->label(__('Total'))
                     ->money('EUR')
                     ->alignEnd()
                     ->weight('semibold')
                     ->color('primary'),
-
                 Tables\Columns\TextColumn::make('estado')
                     ->label(__('Estado'))
                     ->badge()
@@ -288,7 +279,6 @@ class PresupuestoResource extends Resource
                         'aceptado'  => __('Aceptado'),
                         'rechazado' => __('Rechazado'),
                     ]),
-
                 Tables\Filters\SelectFilter::make('escala_id')
                     ->label(__('Escala'))
                     ->options(fn () => Escala::with('barco')
@@ -298,13 +288,11 @@ class PresupuestoResource extends Resource
                             $e->id => $e->barco?->nombre . ' — ' . $e->puerto . ' (' . ($e->fecha?->format('d/m/Y') ?? '—') . ')',
                         ]))
                     ->searchable(),
-
                 Tables\Filters\SelectFilter::make('barco')
                     ->label(__('Barco'))
                     ->relationship('escala.barco', 'nombre')
                     ->searchable()
                     ->preload(),
-
                 Tables\Filters\SelectFilter::make('cliente')
                     ->label(__('Cliente'))
                     ->relationship('escala.barco.cliente', 'nombre')
@@ -321,6 +309,16 @@ class PresupuestoResource extends Resource
             ->emptyStateHeading(__('Sin presupuestos'))
             ->emptyStateDescription(__('Crea el primer presupuesto vinculado a una escala.'))
             ->emptyStateIcon('heroicon-o-calculator');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder

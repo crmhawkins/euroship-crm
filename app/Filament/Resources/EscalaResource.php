@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class EscalaResource extends Resource
 {
@@ -38,9 +39,6 @@ class EscalaResource extends Resource
 
     public static function form(Form $form): Form
     {
-        // Layout plan:
-        // Row 1 (Grid 2): [Asignación: Barco + Fecha] [Puerto]
-        // Row 2: Notas (collapsible)
         return $form->schema([
             Forms\Components\Grid::make(2)->schema([
                 Forms\Components\Section::make(__('Asignación'))
@@ -85,6 +83,18 @@ class EscalaResource extends Resource
                 ])
                 ->collapsible()
                 ->collapsed(),
+
+            Forms\Components\Section::make('Remarks')
+                ->icon('heroicon-o-language')
+                ->description(__('Aparece en la Delivery Note PDF.'))
+                ->schema([
+                    Forms\Components\Textarea::make('remarks')
+                        ->hiddenLabel()
+                        ->placeholder('Enter remarks for the Delivery Note...')
+                        ->rows(3)
+                        ->columnSpanFull(),
+                ])
+                ->collapsible(),
         ]);
     }
 
@@ -110,21 +120,18 @@ class EscalaResource extends Resource
                     ->label(__('Cliente'))
                     ->color('gray')
                     ->toggleable(),
-
                 Tables\Columns\TextColumn::make('pedidos_count')
                     ->label(__('Pedidos'))
                     ->counts('pedidos')
                     ->badge()
                     ->color('primary')
                     ->alignCenter(),
-
                 Tables\Columns\TextColumn::make('servicios_count')
                     ->label(__('Servicios'))
                     ->counts('servicios')
                     ->badge()
                     ->color('info')
                     ->alignCenter(),
-
                 Tables\Columns\TextColumn::make('presupuestos_count')
                     ->label(__('Presup.'))
                     ->counts('presupuestos')
@@ -140,8 +147,14 @@ class EscalaResource extends Resource
                     ->preload(),
             ])
             ->actions([
+                Tables\Actions\Action::make('delivery_note')
+                    ->tooltip(__('Delivery Note PDF'))
+                    ->icon('heroicon-o-document-text')
+                    ->color('info')
+                    ->iconButton()
+                    ->url(fn (Escala $record) => route('escala.delivery-note', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\Action::make('reporte_pendientes')
-                    ->label(__('PDF'))
                     ->tooltip(__('Reporte de pertrechos pendientes'))
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('warning')
@@ -159,6 +172,16 @@ class EscalaResource extends Resource
             ->emptyStateHeading(__('Sin escalas registradas'))
             ->emptyStateDescription(__('Crea la primera escala para empezar a gestionar pedidos, servicios y presupuestos.'))
             ->emptyStateIcon('heroicon-o-map-pin');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getGloballySearchableAttributes(): array

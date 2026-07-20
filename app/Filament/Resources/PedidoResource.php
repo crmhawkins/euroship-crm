@@ -13,6 +13,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class PedidoResource extends Resource
 {
@@ -41,11 +42,6 @@ class PedidoResource extends Resource
 
     public static function form(Form $form): Form
     {
-        // Layout plan:
-        // Resumen (placeholder, solo en edición) en la parte superior
-        // Tabs:
-        //   - General: Asignación (barco/escala) + Datos del pedido (lado a lado)
-        //   - Pertrechos: Repeater colapsado con itemLabel
         return $form->schema([
             Forms\Components\Placeholder::make('resumen')
                 ->label('')
@@ -214,7 +210,7 @@ class PedidoResource extends Resource
                                         ->columnSpanFull(),
                                 ])
                                 ->columns(5)
-                                ->defaultItems(1)
+                                ->defaultItems(0)
                                 ->reorderable(false)
                                 ->cloneable()
                                 ->itemLabel(fn (array $state): ?string => isset($state['descripcion'])
@@ -291,7 +287,6 @@ class PedidoResource extends Resource
                         'parcial'   => __('Parcial'),
                         'entregado' => __('Entregado'),
                     ]),
-
                 Tables\Filters\SelectFilter::make('escala_id')
                     ->label(__('Escala'))
                     ->options(fn () => \App\Models\Escala::with('barco')
@@ -301,13 +296,11 @@ class PedidoResource extends Resource
                             $e->id => ($e->barco?->nombre ?? '—') . ' — ' . $e->puerto . ' (' . ($e->fecha?->format('d/m/Y') ?? '—') . ')',
                         ]))
                     ->searchable(),
-
                 Tables\Filters\SelectFilter::make('barco')
                     ->label(__('Barco'))
                     ->relationship('escala.barco', 'nombre')
                     ->searchable()
                     ->preload(),
-
                 Tables\Filters\SelectFilter::make('cliente')
                     ->label(__('Cliente'))
                     ->relationship('escala.barco.cliente', 'nombre')
@@ -326,6 +319,16 @@ class PedidoResource extends Resource
             ->emptyStateHeading(__('Sin pedidos'))
             ->emptyStateDescription(__('Crea el primer pedido vinculado a una escala.'))
             ->emptyStateIcon('heroicon-o-clipboard-document-list');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
