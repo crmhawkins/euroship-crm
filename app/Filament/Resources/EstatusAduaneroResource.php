@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class EstatusAduaneroResource extends Resource
 {
@@ -69,6 +70,16 @@ class EstatusAduaneroResource extends Resource
             ->emptyStateHeading(__('Sin estatus aduaneros'))
             ->emptyStateDescription(__('Añade los estatus aduaneros que utilizas en los servicios.'))
             ->emptyStateIcon('heroicon-o-shield-check');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getPages(): array

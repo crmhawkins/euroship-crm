@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class BarcoResource extends Resource
 {
@@ -20,26 +21,12 @@ class BarcoResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    public static function getNavigationLabel(): string
-    {
-        return __('Barcos');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return __('Barco');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('Barcos');
-    }
+    public static function getNavigationLabel(): string { return __('Barcos'); }
+    public static function getModelLabel(): string { return __('Barco'); }
+    public static function getPluralModelLabel(): string { return __('Barcos'); }
 
     public static function form(Form $form): Form
     {
-        // Layout plan:
-        // Row 1 (Grid 2): [Titularidad] [Identificación marítima]
-        // Row 2: Notas (collapsible, collapsed)
         return $form->schema([
             Forms\Components\Grid::make(2)->schema([
                 Forms\Components\Section::make(__('Titularidad'))
@@ -145,6 +132,16 @@ class BarcoResource extends Resource
             ->emptyStateHeading(__('Sin barcos registrados'))
             ->emptyStateDescription(__('Da de alta el primer barco asociado a un cliente.'))
             ->emptyStateIcon('heroicon-o-globe-europe-africa');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getGloballySearchableAttributes(): array

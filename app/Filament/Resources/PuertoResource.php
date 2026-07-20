@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class PuertoResource extends Resource
 {
@@ -69,6 +70,16 @@ class PuertoResource extends Resource
             ->emptyStateHeading(__('Sin puertos'))
             ->emptyStateDescription(__('Añade los puertos donde operáis.'))
             ->emptyStateIcon('heroicon-o-building-library');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getPages(): array

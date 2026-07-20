@@ -17,6 +17,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ServicioResource extends Resource
 {
@@ -34,9 +35,6 @@ class ServicioResource extends Resource
 
     public static function form(Form $form): Form
     {
-        // Layout plan:
-        // Tabs: Asignación | Conocimiento | Estado y ubicación
-        // Resumen placeholder en edit mostrando flags ENT/FACTU/INC y llegada
         return $form->schema([
             Forms\Components\Placeholder::make('resumen')
                 ->label('')
@@ -109,12 +107,10 @@ class ServicioResource extends Resource
                                             ->options(fn () => Courier::activos()->pluck('nombre', 'id'))
                                             ->searchable()
                                             ->nullable(),
-
                                         Forms\Components\TextInput::make('number')
                                             ->label(__('Tracking / Número'))
                                             ->placeholder('Número de conocimiento o tracking del courier')
                                             ->maxLength(100),
-
                                         Forms\Components\DatePicker::make('llegada')
                                             ->label(__('Fecha de llegada'))
                                             ->native(false)
@@ -130,14 +126,12 @@ class ServicioResource extends Resource
                                             ->numeric()
                                             ->minValue(0)
                                             ->placeholder('0'),
-
                                         Forms\Components\TextInput::make('kg')
                                             ->label(__('Peso (KG)'))
                                             ->numeric()
                                             ->minValue(0)
                                             ->suffix('kg')
                                             ->placeholder('0.00'),
-
                                         Forms\Components\Select::make('estatus_aduanero_id')
                                             ->label(__('Estatus aduanero'))
                                             ->options(fn () => EstatusAduanero::activos()->pluck('nombre', 'id'))
@@ -181,12 +175,10 @@ class ServicioResource extends Resource
                                         ->options(fn () => Ubicacion::activos()->pluck('nombre', 'id'))
                                         ->searchable()
                                         ->nullable(),
-
                                     Forms\Components\Textarea::make('comentarios')
                                         ->label(__('Comentarios'))
                                         ->rows(3)
                                         ->columnSpanFull(),
-
                                     Forms\Components\TextInput::make('enlace')
                                         ->label(__('Enlace'))
                                         ->url()
@@ -209,23 +201,19 @@ class ServicioResource extends Resource
                     ->date('d/m/Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
                 Tables\Columns\TextColumn::make('escala.barco.cliente.nombre')
                     ->label(__('Cliente'))
                     ->searchable()
                     ->color('gray'),
-
                 Tables\Columns\TextColumn::make('escala.barco.nombre')
                     ->label(__('Buque'))
                     ->searchable()
                     ->weight('medium'),
-
                 Tables\Columns\TextColumn::make('courier.nombre')
                     ->label(__('Courier'))
                     ->badge()
                     ->color('primary')
                     ->searchable(),
-
                 Tables\Columns\TextColumn::make('number')
                     ->label(__('Tracking'))
                     ->searchable()
@@ -234,26 +222,22 @@ class ServicioResource extends Resource
                     ->openUrlInNewTab()
                     ->icon(fn (Servicio $record): ?string => $record->enlace ? 'heroicon-m-arrow-top-right-on-square' : null)
                     ->color(fn (Servicio $record): ?string => $record->enlace ? 'primary' : null),
-
                 Tables\Columns\TextColumn::make('bx')
                     ->label(__('BX'))
                     ->numeric()
                     ->alignEnd()
                     ->toggleable(),
-
                 Tables\Columns\TextColumn::make('kg')
                     ->label(__('KG'))
                     ->numeric(2)
                     ->suffix(' kg')
                     ->alignEnd()
                     ->toggleable(),
-
                 Tables\Columns\TextColumn::make('llegada')
                     ->label(__('Llegada'))
                     ->date('d/m/Y')
                     ->placeholder('—')
                     ->sortable(),
-
                 Tables\Columns\IconColumn::make('entrada')
                     ->label('ENT')
                     ->tooltip(__('Mercancía recibida'))
@@ -263,7 +247,6 @@ class ServicioResource extends Resource
                     ->falseIcon('heroicon-o-minus-circle')
                     ->falseColor('gray')
                     ->alignCenter(),
-
                 Tables\Columns\IconColumn::make('facturado')
                     ->label('FACTU')
                     ->tooltip(__('Facturado al cliente'))
@@ -273,7 +256,6 @@ class ServicioResource extends Resource
                     ->falseIcon('heroicon-o-minus-circle')
                     ->falseColor('gray')
                     ->alignCenter(),
-
                 Tables\Columns\IconColumn::make('incidencia')
                     ->label('INC')
                     ->tooltip(__('Incidencia registrada'))
@@ -283,13 +265,11 @@ class ServicioResource extends Resource
                     ->falseIcon('heroicon-o-minus')
                     ->falseColor('gray')
                     ->alignCenter(),
-
                 Tables\Columns\TextColumn::make('ubicacion.nombre')
                     ->label(__('Ubicación'))
                     ->badge()
                     ->color('gray')
                     ->toggleable(isToggledHiddenByDefault: true),
-
                 Tables\Columns\TextColumn::make('estatusAduanero.nombre')
                     ->label(__('Estatus aduanero'))
                     ->badge()
@@ -310,34 +290,28 @@ class ServicioResource extends Resource
                             $e->id => $e->barco?->nombre . ' — ' . $e->puerto . ' (' . ($e->fecha?->format('d/m/Y') ?? '—') . ')',
                         ]))
                     ->searchable(),
-
                 Tables\Filters\SelectFilter::make('barco')
                     ->label(__('Barco'))
                     ->relationship('escala.barco', 'nombre')
                     ->searchable()
                     ->preload(),
-
                 Tables\Filters\SelectFilter::make('cliente')
                     ->label(__('Cliente'))
                     ->relationship('escala.barco.cliente', 'nombre')
                     ->searchable()
                     ->preload(),
-
                 Tables\Filters\SelectFilter::make('courier_id')
                     ->label(__('Courier'))
                     ->options(fn () => Courier::activos()->pluck('nombre', 'id')),
-
                 Tables\Filters\TernaryFilter::make('llegada')
                     ->label(__('Con llegada'))
                     ->nullable(),
-
                 Tables\Filters\TernaryFilter::make('entrada')->label(__('ENT')),
                 Tables\Filters\TernaryFilter::make('facturado')->label(__('Facturado')),
                 Tables\Filters\TernaryFilter::make('incidencia')->label(__('Incidencia')),
             ])
             ->actions([
                 Tables\Actions\Action::make('nota_entrega')
-                    ->label(__('PDF'))
                     ->tooltip(__('Generar nota de entrega'))
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('info')
@@ -353,6 +327,16 @@ class ServicioResource extends Resource
             ->emptyStateHeading(__('Sin servicios'))
             ->emptyStateDescription(__('Registra el primer conocimiento o envío vinculado a una escala.'))
             ->emptyStateIcon('heroicon-o-inbox-arrow-down');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder

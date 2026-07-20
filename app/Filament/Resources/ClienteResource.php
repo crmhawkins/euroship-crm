@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ClienteResource extends Resource
 {
@@ -20,26 +21,12 @@ class ClienteResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
-    public static function getNavigationLabel(): string
-    {
-        return __('Clientes');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return __('Cliente');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('Clientes');
-    }
+    public static function getNavigationLabel(): string { return __('Clientes'); }
+    public static function getModelLabel(): string { return __('Cliente'); }
+    public static function getPluralModelLabel(): string { return __('Clientes'); }
 
     public static function form(Form $form): Form
     {
-        // Layout plan:
-        // Row 1 (Grid 2): [Identificación] [Contacto]
-        // Row 2 (full width): Notas (collapsible)
         return $form->schema([
             Forms\Components\Grid::make(2)->schema([
                 Forms\Components\Section::make(__('Identificación'))
@@ -132,6 +119,16 @@ class ClienteResource extends Resource
             ->emptyStateHeading(__('Sin clientes'))
             ->emptyStateDescription(__('Crea el primer cliente para empezar a registrar barcos y escalas.'))
             ->emptyStateIcon('heroicon-o-building-office-2');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getGloballySearchableAttributes(): array

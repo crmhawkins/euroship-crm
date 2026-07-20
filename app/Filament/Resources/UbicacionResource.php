@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class UbicacionResource extends Resource
 {
@@ -69,6 +70,16 @@ class UbicacionResource extends Resource
             ->emptyStateHeading(__('Sin ubicaciones'))
             ->emptyStateDescription(__('Crea ubicaciones para localizar la mercancía dentro del almacén.'))
             ->emptyStateIcon('heroicon-o-archive-box');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getPages(): array

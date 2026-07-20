@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class CourierResource extends Resource
 {
@@ -69,6 +70,16 @@ class CourierResource extends Resource
             ->emptyStateHeading(__('Sin couriers'))
             ->emptyStateDescription(__('Añade los couriers que utilizas para envíos a buques.'))
             ->emptyStateIcon('heroicon-o-truck');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getPages(): array
