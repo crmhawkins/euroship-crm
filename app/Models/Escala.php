@@ -18,6 +18,7 @@ class Escala extends Model
         'fecha',
         'puerto',
         'notas',
+        'remarks',
     ];
 
     protected function casts(): array
