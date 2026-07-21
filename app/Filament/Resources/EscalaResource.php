@@ -66,7 +66,7 @@ class EscalaResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('puerto')
                             ->label(__('Puerto'))
-                            ->options(fn () => Puerto::activos()->orderBy('nombre')->pluck('nombre', 'nombre'))
+                            ->options(fn () => Puerto::activos()->pluck('nombre', 'nombre'))
                             ->searchable()
                             ->required()
                             ->columnSpanFull(),
