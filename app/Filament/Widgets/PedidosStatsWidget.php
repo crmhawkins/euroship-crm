@@ -13,9 +13,9 @@ class PedidosStatsWidget extends BaseWidget
 
     protected function getStats(): array
     {
-        $pendientes = Pedido::where('estado_general', 'pendiente')->count();
-        $parciales  = Pedido::where('estado_general', 'parcial')->count();
-        $entregados = Pedido::where('estado_general', 'entregado')->count();
+        $pendientes        = Pedido::where('estado_general', 'pendiente')->count();
+        $parcialesEntrega  = Pedido::where('estado_general', 'entregado_parcial')->count();
+        $entregados        = Pedido::where('estado_general', 'entregado')->count();
 
         $entregasHoy = Pertrecho::where('estado', 'entregado')
             ->whereDate('updated_at', today())
@@ -36,7 +36,7 @@ class PedidosStatsWidget extends BaseWidget
                 ->color('warning')
                 ->icon('heroicon-o-clipboard-document-list'),
 
-            Stat::make(__('Pedidos parciales'), $parciales)
+            Stat::make(__('Entrega parcial'), $parcialesEntrega)
                 ->description(__('Con entrega parcial'))
                 ->descriptionIcon('heroicon-m-arrow-path')
                 ->color('info'),

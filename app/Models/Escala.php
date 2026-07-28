@@ -15,16 +15,24 @@ class Escala extends Model
 
     protected $fillable = [
         'barco_id',
+        'activo',
         'fecha',
         'puerto',
         'notas',
         'remarks',
+        'overtime',
+        'handling_express',
+        'crane_service',
     ];
 
     protected function casts(): array
     {
         return [
-            'fecha' => 'date',
+            'fecha'            => 'date',
+            'activo'           => 'boolean',
+            'overtime'         => 'boolean',
+            'handling_express' => 'boolean',
+            'crane_service'    => 'boolean',
         ];
     }
 

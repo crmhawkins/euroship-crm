@@ -3,5 +3,5 @@
     $__euroshipLogoPath = public_path('images/euroship-logo.png');
 @endphp
 @if (is_file($__euroshipLogoPath))
-    <img src="data:image/png;base64,{{ base64_encode(file_get_contents($__euroshipLogoPath)) }}" alt="Euroship">
+    <img src="data:image/png;base64,{{ base64_encode(file_get_contents($__euroshipLogoPath)) }}" alt="Euroship" style="max-height: 48px; width: auto;">
 @endif

@@ -54,10 +54,14 @@ class EscalaResource extends Resource
                             ->columnSpanFull(),
                         Forms\Components\DatePicker::make('fecha')
                             ->label(__('Fecha de escala'))
-                            ->required()
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->default(now())
+                            ->columnSpanFull(),
+                        Forms\Components\Toggle::make('activo')
+                            ->label(__('Escala activa'))
+                            ->default(true)
+                            ->helperText(__('Desactívala para marcarla como cerrada.'))
                             ->columnSpanFull(),
                     ]),
 
@@ -95,6 +99,20 @@ class EscalaResource extends Resource
                         ->columnSpanFull(),
                 ])
                 ->collapsible(),
+
+            Forms\Components\Section::make(__('Servicios adicionales'))
+                ->icon('heroicon-o-plus-circle')
+                ->description(__('Aparecen marcados en la Delivery Note PDF.'))
+                ->schema([
+                    Forms\Components\Checkbox::make('overtime')
+                        ->label('Overtime'),
+                    Forms\Components\Checkbox::make('handling_express')
+                        ->label('Handling / Express'),
+                    Forms\Components\Checkbox::make('crane_service')
+                        ->label('Crane Service'),
+                ])
+                ->columns(3)
+                ->collapsible(),
         ]);
     }
 
@@ -120,6 +138,11 @@ class EscalaResource extends Resource
                     ->label(__('Cliente'))
                     ->color('gray')
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('activo')
+                    ->label(__('Estado'))
+                    ->badge()
+                    ->formatStateUsing(fn (bool $state) => $state ? __('Activa') : __('Cerrada'))
+                    ->color(fn (bool $state) => $state ? 'success' : 'gray'),
                 Tables\Columns\TextColumn::make('pedidos_count')
                     ->label(__('Pedidos'))
                     ->counts('pedidos')
@@ -140,6 +163,11 @@ class EscalaResource extends Resource
                     ->alignCenter(),
             ])
             ->filters([
+                Tables\Filters\TernaryFilter::make('activo')
+                    ->label(__('Estado'))
+                    ->trueLabel(__('Solo activas'))
+                    ->falseLabel(__('Solo cerradas'))
+                    ->native(false),
                 Tables\Filters\SelectFilter::make('barco_id')
                     ->label(__('Barco'))
                     ->relationship('barco', 'nombre')

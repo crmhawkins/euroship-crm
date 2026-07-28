@@ -16,6 +16,7 @@ class Presupuesto extends Model
     protected $fillable = [
         'escala_id',
         'numero_presupuesto',
+        'numero_pedido_cliente',
         'fecha_presupuesto',
         'estado',
         'notas',

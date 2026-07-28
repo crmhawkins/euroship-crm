@@ -37,13 +37,11 @@ class PresupuestoResource extends Resource
                 ->label('')
                 ->content(function (?Presupuesto $record) {
                     if (! $record) return null;
-                    $total = number_format((float) $record->total, 2, ',', '.');
+                    $ref = $record->numero_pedido_cliente ?? $record->numero_presupuesto ?? '—';
                     return sprintf(
-                        '%s · %s · %d líneas · Total: %s € · Estado: %s',
-                        $record->numero_presupuesto ?? '—',
+                        '%s · %s · Estado: %s',
+                        $ref,
                         $record->fecha_presupuesto?->format('d/m/Y'),
-                        $record->lineas()->count(),
-                        $total,
                         ucfirst($record->estado ?? '—')
                     );
                 })
@@ -96,11 +94,16 @@ class PresupuestoResource extends Resource
                                     ->icon('heroicon-o-calculator')
                                     ->schema([
                                         Forms\Components\TextInput::make('numero_presupuesto')
-                                            ->label(__('Número'))
+                                            ->label(__('Número interno'))
                                             ->disabled()
                                             ->dehydrated()
                                             ->placeholder(__('Auto'))
                                             ->helperText(__('Se genera automáticamente al crear.')),
+
+                                        Forms\Components\TextInput::make('numero_pedido_cliente')
+                                            ->label(__('Nº Pedido Cliente'))
+                                            ->maxLength(255)
+                                            ->placeholder('PO-2026-001'),
 
                                         Forms\Components\DatePicker::make('fecha_presupuesto')
                                             ->label(__('Fecha'))
@@ -112,11 +115,11 @@ class PresupuestoResource extends Resource
                                         Forms\Components\Select::make('estado')
                                             ->label(__('Estado'))
                                             ->options([
-                                                'ofertado'  => __('Ofertado'),
-                                                'aceptado'  => __('Aceptado'),
-                                                'rechazado' => __('Rechazado'),
+                                                'pendiente'  => __('Pendiente'),
+                                                'completado' => __('Completado'),
+                                                'asignado'   => __('Asignado'),
                                             ])
-                                            ->default('ofertado')
+                                            ->default('pendiente')
                                             ->required()
                                             ->columnSpanFull(),
 
@@ -177,11 +180,11 @@ class PresupuestoResource extends Resource
                                     Forms\Components\Select::make('estado')
                                         ->label(__('Estado'))
                                         ->options([
-                                            'ofertado'  => __('Ofertado'),
-                                            'aceptado'  => __('Aceptado'),
-                                            'rechazado' => __('Rechazado'),
+                                            'pendiente'  => __('Pendiente'),
+                                            'completado' => __('Completado'),
+                                            'asignado'   => __('Asignado'),
                                         ])
-                                        ->default('ofertado')
+                                        ->default('pendiente')
                                         ->required(),
 
                                     Forms\Components\Textarea::make('notas')
@@ -219,11 +222,12 @@ class PresupuestoResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('numero_presupuesto')
-                    ->label(__('Número'))
+                Tables\Columns\TextColumn::make('numero_pedido_cliente')
+                    ->label(__('Nº Pedido Cliente'))
                     ->searchable()
                     ->sortable()
                     ->weight('medium')
+                    ->placeholder('—')
                     ->url(fn (Presupuesto $record): ?string => $record->enlace ?: null)
                     ->openUrlInNewTab()
                     ->icon(fn (Presupuesto $record): ?string => $record->enlace ? 'heroicon-m-arrow-top-right-on-square' : null)
@@ -242,42 +246,35 @@ class PresupuestoResource extends Resource
                 Tables\Columns\TextColumn::make('escala.puerto')
                     ->label(__('Escala'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('lineas_count')
-                    ->label(__('Líneas'))
-                    ->counts('lineas')
-                    ->badge()
-                    ->color('gray')
-                    ->alignCenter(),
-                Tables\Columns\TextColumn::make('total')
-                    ->label(__('Total'))
-                    ->money('EUR')
-                    ->alignEnd()
-                    ->weight('semibold')
-                    ->color('primary'),
                 Tables\Columns\TextColumn::make('estado')
                     ->label(__('Estado'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => __(ucfirst($state)))
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'pendiente'  => __('Pendiente'),
+                        'completado' => __('Completado'),
+                        'asignado'   => __('Asignado'),
+                        default      => __(ucfirst($state)),
+                    })
                     ->color(fn (string $state) => match ($state) {
-                        'ofertado'  => 'warning',
-                        'aceptado'  => 'success',
-                        'rechazado' => 'danger',
-                        default     => 'gray',
+                        'pendiente'  => 'warning',
+                        'completado' => 'success',
+                        'asignado'   => 'info',
+                        default      => 'gray',
                     })
                     ->icon(fn (string $state) => match ($state) {
-                        'ofertado'  => 'heroicon-m-clock',
-                        'aceptado'  => 'heroicon-m-check-circle',
-                        'rechazado' => 'heroicon-m-x-circle',
-                        default     => null,
+                        'pendiente'  => 'heroicon-m-clock',
+                        'completado' => 'heroicon-m-check-circle',
+                        'asignado'   => 'heroicon-m-user-circle',
+                        default      => null,
                     }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('estado')
                     ->label(__('Estado'))
                     ->options([
-                        'ofertado'  => __('Ofertado'),
-                        'aceptado'  => __('Aceptado'),
-                        'rechazado' => __('Rechazado'),
+                        'pendiente'  => __('Pendiente'),
+                        'completado' => __('Completado'),
+                        'asignado'   => __('Asignado'),
                     ]),
                 Tables\Filters\SelectFilter::make('escala_id')
                     ->label(__('Escala'))
@@ -338,6 +335,6 @@ class PresupuestoResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['numero_presupuesto', 'escala.barco.nombre', 'escala.barco.cliente.nombre'];
+        return ['numero_presupuesto', 'numero_pedido_cliente', 'escala.barco.nombre', 'escala.barco.cliente.nombre'];
     }
 }

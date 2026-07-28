@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PedidoResource\Pages;
 use App\Models\Escala;
 use App\Models\Pedido;
+use App\Models\Puerto;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
@@ -47,10 +48,9 @@ class PedidoResource extends Resource
                 ->label('')
                 ->content(fn (?Pedido $record) => $record
                     ? sprintf(
-                        '%s · %s · %d líneas · Estado: %s',
+                        '%s · %s · Estado: %s',
                         $record->numero_pedido,
                         $record->fecha_pedido?->format('d/m/Y'),
-                        $record->pertrechos()->count(),
                         ucfirst($record->estado_general ?? '—')
                     )
                     : null
@@ -135,10 +135,11 @@ class PedidoResource extends Resource
                                             ->native(false)
                                             ->displayFormat('d/m/Y')
                                             ->default(now()),
-                                        Forms\Components\TextInput::make('puerto_entrega')
+                                        Forms\Components\Select::make('puerto_entrega')
                                             ->label(__('Puerto de entrega'))
+                                            ->options(fn () => Puerto::activos()->pluck('nombre', 'nombre'))
+                                            ->searchable()
                                             ->required()
-                                            ->maxLength(255)
                                             ->columnSpanFull(),
                                         Forms\Components\TextInput::make('enlace')
                                             ->label(__('Enlace'))
@@ -150,14 +151,15 @@ class PedidoResource extends Resource
                                         Forms\Components\Select::make('estado_general')
                                             ->label(__('Estado'))
                                             ->options([
-                                                'pendiente'  => __('Pendiente'),
-                                                'parcial'    => __('Parcial'),
-                                                'entregado'  => __('Entregado'),
+                                                'pendiente'         => __('Pendiente'),
+                                                'preparado'         => __('Preparado'),
+                                                'facturado'         => __('Facturado'),
+                                                'despachado'        => __('Despachado'),
+                                                'entregado'         => __('Entregado'),
+                                                'entregado_parcial' => __('Entregado parcial'),
                                             ])
                                             ->default('pendiente')
-                                            ->disabled()
-                                            ->dehydrated(false)
-                                            ->helperText(__('Se recalcula automáticamente según los pertrechos.'))
+                                            ->required()
                                             ->columnSpanFull(),
                                     ]),
                             ]),
@@ -256,36 +258,47 @@ class PedidoResource extends Resource
                     ->searchable()
                     ->icon('heroicon-m-map-pin')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('pertrechos_count')
-                    ->label(__('Líneas'))
-                    ->counts('pertrechos')
-                    ->badge()
-                    ->color('gray')
-                    ->alignCenter(),
                 Tables\Columns\TextColumn::make('estado_general')
                     ->label(__('Estado'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => __(ucfirst($state)))
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'pendiente'         => __('Pendiente'),
+                        'preparado'         => __('Preparado'),
+                        'facturado'         => __('Facturado'),
+                        'despachado'        => __('Despachado'),
+                        'entregado_parcial' => __('Entregado parcial'),
+                        'entregado'         => __('Entregado'),
+                        default             => __(ucfirst($state)),
+                    })
                     ->color(fn (string $state) => match ($state) {
-                        'pendiente' => 'warning',
-                        'parcial'   => 'info',
-                        'entregado' => 'success',
-                        default     => 'gray',
+                        'pendiente'         => 'warning',
+                        'preparado'         => 'info',
+                        'facturado'         => 'gray',
+                        'despachado'        => 'primary',
+                        'entregado_parcial' => 'warning',
+                        'entregado'         => 'success',
+                        default             => 'gray',
                     })
                     ->icon(fn (string $state) => match ($state) {
-                        'pendiente' => 'heroicon-m-clock',
-                        'parcial'   => 'heroicon-m-arrow-path',
-                        'entregado' => 'heroicon-m-check-circle',
-                        default     => null,
+                        'pendiente'         => 'heroicon-m-clock',
+                        'preparado'         => 'heroicon-m-check',
+                        'facturado'         => 'heroicon-m-banknotes',
+                        'despachado'        => 'heroicon-m-truck',
+                        'entregado_parcial' => 'heroicon-m-arrow-path',
+                        'entregado'         => 'heroicon-m-check-circle',
+                        default             => null,
                     }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('estado_general')
                     ->label(__('Estado'))
                     ->options([
-                        'pendiente' => __('Pendiente'),
-                        'parcial'   => __('Parcial'),
-                        'entregado' => __('Entregado'),
+                        'pendiente'         => __('Pendiente'),
+                        'preparado'         => __('Preparado'),
+                        'facturado'         => __('Facturado'),
+                        'despachado'        => __('Despachado'),
+                        'entregado_parcial' => __('Entregado parcial'),
+                        'entregado'         => __('Entregado'),
                     ]),
                 Tables\Filters\SelectFilter::make('escala_id')
                     ->label(__('Escala'))

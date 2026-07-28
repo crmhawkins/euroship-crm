@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\PedidoResource;
 use App\Models\Pedido;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,12 +16,12 @@ class PedidosPendientesTableWidget extends BaseWidget
 
     public function getTableHeading(): string
     {
-        return __('Pedidos pendientes o parciales');
+        return __('Pedidos en curso');
     }
 
     public function getTableDescription(): ?string
     {
-        return __('Pedidos sin completar entrega, ordenados por fecha más reciente.');
+        return __('Pedidos sin entrega completa, ordenados por fecha más reciente.');
     }
 
     public function table(Table $table): Table
@@ -28,7 +29,7 @@ class PedidosPendientesTableWidget extends BaseWidget
         return $table
             ->query(
                 Pedido::query()
-                    ->whereIn('estado_general', ['pendiente', 'parcial'])
+                    ->whereNotIn('estado_general', ['entregado'])
                     ->with(['escala.barco.cliente'])
                     ->orderBy('fecha_pedido', 'desc')
             )
@@ -36,7 +37,9 @@ class PedidosPendientesTableWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('numero_pedido')
                     ->label(__('Número'))
                     ->searchable()
-                    ->weight('medium'),
+                    ->weight('medium')
+                    ->color('primary')
+                    ->url(fn (Pedido $record) => PedidoResource::getUrl('view', ['record' => $record])),
                 Tables\Columns\TextColumn::make('fecha_pedido')
                     ->label(__('Fecha'))
                     ->date('d/m/Y'),
@@ -48,21 +51,36 @@ class PedidosPendientesTableWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('puerto_entrega')
                     ->label(__('Entrega'))
                     ->icon('heroicon-m-map-pin'),
-                Tables\Columns\TextColumn::make('pertrechos_count')
-                    ->label(__('Líneas'))
-                    ->counts('pertrechos')
-                    ->badge()
-                    ->color('gray')
-                    ->alignCenter(),
                 Tables\Columns\TextColumn::make('estado_general')
                     ->label(__('Estado'))
                     ->badge()
-                    ->formatStateUsing(fn ($state) => __(ucfirst($state)))
-                    ->color(fn ($state) => $state === 'parcial' ? 'info' : 'warning')
-                    ->icon(fn ($state) => $state === 'parcial' ? 'heroicon-m-arrow-path' : 'heroicon-m-clock'),
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'pendiente'         => __('Pendiente'),
+                        'preparado'         => __('Preparado'),
+                        'facturado'         => __('Facturado'),
+                        'despachado'        => __('Despachado'),
+                        'entregado_parcial' => __('Entregado parcial'),
+                        default             => __(ucfirst($state)),
+                    })
+                    ->color(fn ($state) => match ($state) {
+                        'pendiente'         => 'warning',
+                        'preparado'         => 'info',
+                        'facturado'         => 'gray',
+                        'despachado'        => 'primary',
+                        'entregado_parcial' => 'warning',
+                        default             => 'gray',
+                    })
+                    ->icon(fn ($state) => match ($state) {
+                        'pendiente'         => 'heroicon-m-clock',
+                        'preparado'         => 'heroicon-m-check',
+                        'facturado'         => 'heroicon-m-banknotes',
+                        'despachado'        => 'heroicon-m-truck',
+                        'entregado_parcial' => 'heroicon-m-arrow-path',
+                        default             => null,
+                    }),
             ])
             ->paginated([5, 10, 25])
-            ->emptyStateHeading(__('Sin pedidos pendientes'))
+            ->emptyStateHeading(__('Sin pedidos en curso'))
             ->emptyStateDescription(__('Todo al día.'))
             ->emptyStateIcon('heroicon-o-check-circle');
     }
