@@ -14,9 +14,4 @@ class EditPedido extends EditRecord
     {
         return [Actions\ViewAction::make(), Actions\DeleteAction::make()];
     }
-
-    protected function afterSave(): void
-    {
-        $this->record->recalcularEstado();
-    }
 }

@@ -40,9 +40,6 @@ class Pedido extends Model
         return $this->hasMany(Pertrecho::class);
     }
 
-    /**
-     * Recalcula estado_general a partir del estado de las líneas (pertrechos).
-     */
     public function recalcularEstado(): string
     {
         $total = $this->pertrechos()->count();
@@ -55,9 +52,9 @@ class Pedido extends Model
         $entregados = $this->pertrechos()->where('estado', 'entregado')->count();
 
         $this->estado_general = match (true) {
-            $entregados === 0 => 'pendiente',
-            $entregados === $total => 'entregado',
-            default => 'parcial',
+            $entregados === 0        => 'pendiente',
+            $entregados === $total   => 'entregado',
+            default                  => 'entregado_parcial',
         };
         $this->save();
 

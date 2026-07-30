@@ -39,7 +39,8 @@ class PedidosPendientesTableWidget extends BaseWidget
                     ->searchable()
                     ->weight('medium')
                     ->color('primary')
-                    ->url(fn (Pedido $record) => PedidoResource::getUrl('view', ['record' => $record])),
+                    ->url(fn (Pedido $record) => $record->enlace ?: null)
+                    ->openUrlInNewTab(),
                 Tables\Columns\TextColumn::make('fecha_pedido')
                     ->label(__('Fecha'))
                     ->date('d/m/Y'),
@@ -78,6 +79,13 @@ class PedidosPendientesTableWidget extends BaseWidget
                         'entregado_parcial' => 'heroicon-m-arrow-path',
                         default             => null,
                     }),
+            ])
+            ->actions([
+                Tables\Actions\Action::make('edit')
+                    ->label(__('Editar'))
+                    ->icon('heroicon-m-pencil-square')
+                    ->size('sm')
+                    ->url(fn (Pedido $record) => PedidoResource::getUrl('edit', ['record' => $record])),
             ])
             ->paginated([5, 10, 25])
             ->emptyStateHeading(__('Sin pedidos en curso'))
