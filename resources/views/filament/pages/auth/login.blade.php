@@ -131,9 +131,8 @@
             </div>
         </div>
     </div>
-</div>
 
-<style>
+    <style>
     /* Nuestro overlay fixed (z-50) cubre el shell de Filament — no ocultar main o el fixed div no se pinta */
     .fi-simple-layout { background: transparent !important; padding: 0 !important; }
     .fi-simple-main-ctn { background: transparent !important; }
@@ -174,3 +173,4 @@
     .fi-fo-field-wrp .text-gray-950 { color: #1e293b !important; }
     .fi-fo-field-wrp .dark\:text-white { color: #1e293b !important; }
 </style>
+</div>
