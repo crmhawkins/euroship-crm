@@ -1,8 +1,40 @@
-{{-- Un solo root element para Livewire (wire:id se asigna al primer elemento del blade) --}}
-<div style="position:fixed;inset:0;display:flex;z-index:50;overflow:hidden;">
+@push('styles')
+<style>
+.fi-simple-layout { background: transparent !important; padding: 0 !important; }
+.fi-simple-main-ctn { background: transparent !important; }
+.fi-simple-main { background: transparent !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; margin: 0 !important; border-radius: 0 !important; }
+body.fi-body { overflow: hidden; background: #070f2b !important; }
+.fi-ac-btn-action[type="submit"] {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.03em !important;
+}
+.fi-input-wrp { border-radius: 0.625rem !important; }
+.fi-fo-field-wrp label span,
+.fi-fo-field-wrp .fi-fo-field-wrp-label span,
+.fi-input,
+.fi-fo-checkbox-input + span {
+    color: #1e293b !important;
+}
+.fi-input {
+    background-color: white !important;
+    background: white !important;
+}
+.fi-input-wrp {
+    background-color: white !important;
+    --tw-ring-color: rgba(15,23,42,0.1) !important;
+}
+.fi-fo-field-wrp { color: #1e293b !important; }
+.fi-fo-field-wrp .text-gray-950 { color: #1e293b !important; }
+.fi-fo-field-wrp .dark\:text-white { color: #1e293b !important; }
+</style>
+@endpush
 
-{{-- Script dentro del root div: dark mode no puede ser el root o Livewire pierde el form --}}
-<script>document.documentElement.classList.remove('dark');window.loadDarkMode=function(){document.documentElement.classList.remove('dark');};</script>
+<div style="position:fixed;inset:0;display:flex;z-index:50;overflow:hidden;"
+     x-init="document.documentElement.classList.remove('dark');window.loadDarkMode=function(){document.documentElement.classList.remove('dark');};">
 
     {{-- ===== Panel izquierdo: branding ===== --}}
     <div class="hidden lg:flex flex-col items-center justify-center relative overflow-hidden"
@@ -132,45 +164,4 @@
         </div>
     </div>
 
-    <style>
-    /* Nuestro overlay fixed (z-50) cubre el shell de Filament — no ocultar main o el fixed div no se pinta */
-    .fi-simple-layout { background: transparent !important; padding: 0 !important; }
-    .fi-simple-main-ctn { background: transparent !important; }
-    .fi-simple-main { background: transparent !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; margin: 0 !important; border-radius: 0 !important; }
-    body.fi-body { overflow: hidden; background: #070f2b !important; }
-
-    /* Botón submit */
-    .fi-ac-btn-action[type="submit"] {
-        padding-top: 0.75rem !important;
-        padding-bottom: 0.75rem !important;
-        border-radius: 0.75rem !important;
-        font-size: 0.9rem !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.03em !important;
-    }
-    /* Inputs */
-    .fi-input-wrp { border-radius: 0.625rem !important; }
-
-    /* Overrides dark mode en el formulario — texto siempre oscuro sobre fondo blanco */
-    .fi-fo-field-wrp label span,
-    .fi-fo-field-wrp .fi-fo-field-wrp-label span,
-    .fi-input,
-    .fi-fo-checkbox-input + span {
-        color: #1e293b !important;
-    }
-    .fi-input {
-        background-color: white !important;
-        background: white !important;
-    }
-    .fi-input-wrp {
-        background-color: white !important;
-        --tw-ring-color: rgba(15,23,42,0.1) !important;
-    }
-    .fi-fo-field-wrp {
-        color: #1e293b !important;
-    }
-    /* Checkbox label */
-    .fi-fo-field-wrp .text-gray-950 { color: #1e293b !important; }
-    .fi-fo-field-wrp .dark\:text-white { color: #1e293b !important; }
-</style>
 </div>
