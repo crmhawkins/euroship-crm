@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Resources\PedidoResource;
+use App\Models\Estado;
 use App\Models\Pedido;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -29,7 +30,7 @@ class PedidosPendientesTableWidget extends BaseWidget
         return $table
             ->query(
                 Pedido::query()
-                    ->whereNotIn('estado_general', ['entregado'])
+                    ->whereNotIn('estado_general', Estado::clavesFinalizadas(Estado::TIPO_PEDIDO))
                     ->with(['escala.barco.cliente'])
                     ->orderBy('fecha_pedido', 'desc')
             )
@@ -55,30 +56,8 @@ class PedidosPendientesTableWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('estado_general')
                     ->label(__('Estado'))
                     ->badge()
-                    ->formatStateUsing(fn ($state) => match ($state) {
-                        'pendiente'         => __('Pendiente'),
-                        'preparado'         => __('Preparado'),
-                        'facturado'         => __('Facturado'),
-                        'despachado'        => __('Despachado'),
-                        'entregado_parcial' => __('Entregado parcial'),
-                        default             => __(ucfirst($state)),
-                    })
-                    ->color(fn ($state) => match ($state) {
-                        'pendiente'         => 'warning',
-                        'preparado'         => 'info',
-                        'facturado'         => 'gray',
-                        'despachado'        => 'primary',
-                        'entregado_parcial' => 'warning',
-                        default             => 'gray',
-                    })
-                    ->icon(fn ($state) => match ($state) {
-                        'pendiente'         => 'heroicon-m-clock',
-                        'preparado'         => 'heroicon-m-check',
-                        'facturado'         => 'heroicon-m-banknotes',
-                        'despachado'        => 'heroicon-m-truck',
-                        'entregado_parcial' => 'heroicon-m-arrow-path',
-                        default             => null,
-                    }),
+                    ->formatStateUsing(fn ($state) => Estado::etiqueta(Estado::TIPO_PEDIDO, $state))
+                    ->color(fn ($state) => Estado::colorDe(Estado::TIPO_PEDIDO, $state)),
             ])
             ->actions([
                 Tables\Actions\Action::make('edit')

@@ -23,6 +23,10 @@ class Escala extends Model
         'overtime',
         'handling_express',
         'crane_service',
+        'riggers',
+        'transport_trucks',
+        'assistants',
+        'escort',
     ];
 
     protected function casts(): array
@@ -33,6 +37,10 @@ class Escala extends Model
             'overtime'         => 'boolean',
             'handling_express' => 'boolean',
             'crane_service'    => 'boolean',
+            'riggers'          => 'boolean',
+            'transport_trucks' => 'boolean',
+            'assistants'       => 'boolean',
+            'escort'           => 'boolean',
         ];
     }
 

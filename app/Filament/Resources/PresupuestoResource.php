@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PresupuestoResource\Pages;
 use App\Models\Barco;
 use App\Models\Escala;
+use App\Models\Estado;
 use App\Models\Presupuesto;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
@@ -42,7 +43,7 @@ class PresupuestoResource extends Resource
                         '%s · %s · Estado: %s',
                         $ref,
                         $record->fecha_presupuesto?->format('d/m/Y'),
-                        ucfirst($record->estado ?? '—')
+                        Estado::etiqueta(Estado::TIPO_PRESUPUESTO, $record->estado)
                     );
                 })
                 ->hiddenOn('create')
@@ -114,11 +115,7 @@ class PresupuestoResource extends Resource
 
                                         Forms\Components\Select::make('estado')
                                             ->label(__('Estado'))
-                                            ->options([
-                                                'pendiente'  => __('Pendiente'),
-                                                'completado' => __('Completado'),
-                                                'asignado'   => __('Asignado'),
-                                            ])
+                                            ->options(fn (?string $state) => Estado::opciones(Estado::TIPO_PRESUPUESTO, $state))
                                             ->default('pendiente')
                                             ->required()
                                             ->columnSpanFull(),
@@ -179,11 +176,7 @@ class PresupuestoResource extends Resource
 
                                     Forms\Components\Select::make('estado')
                                         ->label(__('Estado'))
-                                        ->options([
-                                            'pendiente'  => __('Pendiente'),
-                                            'completado' => __('Completado'),
-                                            'asignado'   => __('Asignado'),
-                                        ])
+                                        ->options(fn (?string $state) => Estado::opciones(Estado::TIPO_PRESUPUESTO, $state))
                                         ->default('pendiente')
                                         ->required(),
 
@@ -249,33 +242,13 @@ class PresupuestoResource extends Resource
                 Tables\Columns\TextColumn::make('estado')
                     ->label(__('Estado'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => match ($state) {
-                        'pendiente'  => __('Pendiente'),
-                        'completado' => __('Completado'),
-                        'asignado'   => __('Asignado'),
-                        default      => __(ucfirst($state)),
-                    })
-                    ->color(fn (string $state) => match ($state) {
-                        'pendiente'  => 'warning',
-                        'completado' => 'success',
-                        'asignado'   => 'info',
-                        default      => 'gray',
-                    })
-                    ->icon(fn (string $state) => match ($state) {
-                        'pendiente'  => 'heroicon-m-clock',
-                        'completado' => 'heroicon-m-check-circle',
-                        'asignado'   => 'heroicon-m-user-circle',
-                        default      => null,
-                    }),
+                    ->formatStateUsing(fn (?string $state) => Estado::etiqueta(Estado::TIPO_PRESUPUESTO, $state))
+                    ->color(fn (?string $state) => Estado::colorDe(Estado::TIPO_PRESUPUESTO, $state)),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('estado')
                     ->label(__('Estado'))
-                    ->options([
-                        'pendiente'  => __('Pendiente'),
-                        'completado' => __('Completado'),
-                        'asignado'   => __('Asignado'),
-                    ]),
+                    ->options(fn () => Estado::opciones(Estado::TIPO_PRESUPUESTO)),
                 Tables\Filters\SelectFilter::make('escala_id')
                     ->label(__('Escala'))
                     ->options(fn () => Escala::with('barco')

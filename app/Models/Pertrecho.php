@@ -34,7 +34,13 @@ class Pertrecho extends Model
             $pertrecho->pedido?->recalcularEstado();
         };
 
-        static::saved($recalc);
+        // Solo cuando cambia la entrega: guardar el pedido re-guarda todos sus pertrechos (Repeater)
+        // y, si no, pisaría el estado que el usuario acaba de elegir a mano.
+        static::saved(function (Pertrecho $pertrecho) use ($recalc): void {
+            if ($pertrecho->wasRecentlyCreated || $pertrecho->wasChanged('estado')) {
+                $recalc($pertrecho);
+            }
+        });
         static::deleted($recalc);
     }
 

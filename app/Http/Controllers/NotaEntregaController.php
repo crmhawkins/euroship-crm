@@ -17,9 +17,11 @@ class NotaEntregaController extends Controller
         $servicio->load(['escala.barco.cliente', 'courier', 'ubicacion', 'estatusAduanero']);
         $escala = $servicio->escala;
         $servicios = collect([$servicio]);
+        $soloServicio = $servicio;
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.nota-entrega', compact('escala', 'servicios'))
-            ->setPaper('a4', 'portrait');
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.nota-entrega', compact('escala', 'servicios', 'soloServicio'))
+            ->setPaper('a4', 'portrait')
+            ->setOption('isFontSubsettingEnabled', true);
 
         return $pdf->download('delivery-note-' . ($servicio->number ?? $servicio->id) . '.pdf');
     }
@@ -37,7 +39,8 @@ class NotaEntregaController extends Controller
             ->get();
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.nota-entrega', compact('escala', 'servicios'))
-            ->setPaper('a4', 'portrait');
+            ->setPaper('a4', 'portrait')
+            ->setOption('isFontSubsettingEnabled', true);
 
         $puerto = str_replace(' ', '-', $escala->puerto ?? $escala->id);
         $fecha  = $escala->fecha?->format('Y-m-d') ?? $escala->id;

@@ -7,10 +7,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #1a1a1a; }
 
-        .header { display: flex; justify-content: space-between; align-items: flex-start; padding: 20px 30px; border-bottom: 3px solid #293C8E; margin-bottom: 15px; }
-        .logo-area img { height: 50px; }
-        .company-info { text-align: right; font-size: 9px; color: #555; }
-        .company-info strong { font-size: 13px; color: #293C8E; }
 
         .title-bar { background: #293C8E; color: white; padding: 7px 30px; font-size: 13px; font-weight: bold; letter-spacing: 1px; margin-bottom: 15px; }
 
@@ -20,9 +16,8 @@
         .section { padding: 0 30px; margin-bottom: 18px; }
 
         table { width: 100%; border-collapse: collapse; }
-        table th { background: #293C8E; color: white; padding: 5px 7px; text-align: left; font-size: 9px; text-transform: uppercase; }
-        table td { padding: 5px 7px; border-bottom: 1px solid #e5e5e5; font-size: 9px; vertical-align: top; }
-        table tr:nth-child(even) td { background: #f8f9ff; }
+        table.data th { background: #293C8E; color: white; padding: 5px 7px; text-align: left; font-size: 9px; text-transform: uppercase; }
+        table.data td { padding: 5px 7px; border-bottom: 1px solid #e5e5e5; font-size: 9px; vertical-align: top; }
 
         .pedido-header td { background: #e8eeff !important; font-weight: bold; font-size: 10px; }
         .pertrecho-row td { padding-left: 20px; color: #444; }
@@ -30,26 +25,22 @@
         .badge { display: inline-block; padding: 1px 6px; border-radius: 8px; font-size: 8px; font-weight: bold; }
         .badge-warning { background: #fef3c7; color: #92400e; }
         .badge-info    { background: #dbeafe; color: #1e40af; }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-danger  { background: #fee2e2; color: #991b1b; }
+        .badge-gray    { background: #e5e7eb; color: #374151; }
+        .badge-primary { background: #dbeafe; color: #1e3a8a; }
 
         .empty { text-align: center; padding: 20px; color: #888; font-style: italic; }
 
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 8px 30px; border-top: 1px solid #ddd; display: flex; justify-content: space-between; font-size: 8px; color: #888; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; width: 100%; border-top: 1px solid #ddd; }
+        .footer td { padding: 8px 30px; font-size: 8px; color: #888; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="logo-area">
-        @include('pdf.partials.logo')
-    </div>
-    <div class="company-info">
-        <strong>EUROSHIP SPAIN</strong><br>
-        Puerto de Algeciras<br>
-        info@euroshipspain.com
-    </div>
-</div>
+@include('pdf.partials.header')
 
-<div class="title-bar">REPORTE — PEDIDOS PENDIENTES POR ESCALA</div>
+<div class="title-bar" style="margin-top: 0;">REPORTE — PEDIDOS PENDIENTES POR ESCALA</div>
 
 <div class="escala-info">
     <strong>Escala #{{ $escala->id }}</strong> &nbsp;|&nbsp;
@@ -62,16 +53,15 @@
 <div class="section">
 
     @if($pedidos->isEmpty())
-        <p class="empty">No hay pedidos pendientes o parciales para esta escala.</p>
+        <p class="empty">No hay pedidos pendientes para esta escala.</p>
     @else
-        <table>
+        <table class="data">
             <thead>
                 <tr>
                     <th>Nº Pedido</th>
                     <th>Fecha</th>
                     <th>Puerto entrega</th>
                     <th>Estado</th>
-                    <th>Líneas</th>
                     <th>Notas</th>
                 </tr>
             </thead>
@@ -82,20 +72,15 @@
                         <td>{{ $pedido->fecha_pedido?->format('d/m/Y') }}</td>
                         <td>{{ $pedido->puerto_entrega }}</td>
                         <td>
-                            @if($pedido->estado_general === 'pendiente')
-                                <span class="badge badge-warning">Pendiente</span>
-                            @else
-                                <span class="badge badge-info">Parcial</span>
-                            @endif
+                            <span class="badge badge-{{ \App\Models\Estado::colorDe('pedido', $pedido->estado_general) }}">{{ \App\Models\Estado::etiqueta('pedido', $pedido->estado_general) }}</span>
                         </td>
-                        <td>{{ $pedido->pertrechos->count() }}</td>
                         <td>{{ $pedido->notas }}</td>
                     </tr>
                     @foreach($pedido->pertrechos as $p)
                         <tr class="pertrecho-row">
                             <td colspan="2">↳ {{ $p->descripcion }}</td>
                             <td>{{ $p->cantidad }} {{ $p->unidad }}</td>
-                            <td colspan="3">
+                            <td colspan="2">
                                 <span class="badge {{ $p->estado === 'entregado' ? 'badge-info' : 'badge-warning' }}">
                                     {{ ucfirst($p->estado) }}
                                 </span>
@@ -114,8 +99,12 @@
 </div>
 
 <div class="footer">
-    <span>Generado: {{ now()->format('d/m/Y H:i') }}</span>
-    <span>Euroship Spain — crm.euroshipspain.com</span>
+<table>
+    <tr>
+        <td>Generado: {{ now()->format('d/m/Y H:i') }}</td>
+        <td style="text-align:right;">{{ config('euroship.nombre') }} &nbsp;|&nbsp; {{ config('euroship.web') }}</td>
+    </tr>
+</table>
 </div>
 
 </body>

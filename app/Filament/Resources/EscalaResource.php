@@ -106,12 +106,21 @@ class EscalaResource extends Resource
                 ->schema([
                     Forms\Components\Checkbox::make('overtime')
                         ->label('Overtime'),
+                    Forms\Components\Checkbox::make('riggers')
+                        ->label('Riggers'),
                     Forms\Components\Checkbox::make('handling_express')
-                        ->label('Handling / Express'),
+                        ->label('Handling Express'),
+                    Forms\Components\Checkbox::make('transport_trucks')
+                        ->label('Transport Trucks'),
                     Forms\Components\Checkbox::make('crane_service')
                         ->label('Crane Service'),
+                    Forms\Components\Checkbox::make('assistants')
+                        ->label('Assistants'),
+                    Forms\Components\Checkbox::make('escort')
+                        ->label('Escort')
+                        ->columnStart(2),
                 ])
-                ->columns(3)
+                ->columns(2)
                 ->collapsible(),
         ]);
     }
@@ -148,18 +157,24 @@ class EscalaResource extends Resource
                     ->counts('pedidos')
                     ->badge()
                     ->color('primary')
+                    ->tooltip(__('Ver pedidos de esta escala'))
+                    ->url(fn (Escala $record) => PedidoResource::getUrl('index', static::filtroEscala($record)))
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('servicios_count')
                     ->label(__('Servicios'))
                     ->counts('servicios')
                     ->badge()
                     ->color('info')
+                    ->tooltip(__('Ver servicios de esta escala'))
+                    ->url(fn (Escala $record) => ServicioResource::getUrl('index', static::filtroEscala($record)))
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('presupuestos_count')
                     ->label(__('Presup.'))
                     ->counts('presupuestos')
                     ->badge()
                     ->color('warning')
+                    ->tooltip(__('Ver presupuestos de esta escala'))
+                    ->url(fn (Escala $record) => PresupuestoResource::getUrl('index', static::filtroEscala($record)))
                     ->alignCenter(),
             ])
             ->filters([
@@ -200,6 +215,12 @@ class EscalaResource extends Resource
             ->emptyStateHeading(__('Sin escalas registradas'))
             ->emptyStateDescription(__('Crea la primera escala para empezar a gestionar pedidos, servicios y presupuestos.'))
             ->emptyStateIcon('heroicon-o-map-pin');
+    }
+
+    /** Parámetros de URL que abren el listado de Pedidos/Servicios/Presupuestos ya filtrado por la escala. */
+    public static function filtroEscala(Escala $escala): array
+    {
+        return ['tableFilters' => ['escala_id' => ['value' => $escala->id]]];
     }
 
     public static function canDelete(Model $record): bool

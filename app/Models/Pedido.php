@@ -51,6 +51,12 @@ class Pedido extends Model
 
         $entregados = $this->pertrechos()->where('estado', 'entregado')->count();
 
+        // Sin nada entregado no hay progreso que reflejar: se respeta un estado manual
+        // (preparado, facturado, despachado o cualquiera creado por los administradores).
+        if ($entregados === 0 && ! in_array($this->estado_general, ['entregado', 'entregado_parcial'], true)) {
+            return $this->estado_general;
+        }
+
         $this->estado_general = match (true) {
             $entregados === 0        => 'pendiente',
             $entregados === $total   => 'entregado',

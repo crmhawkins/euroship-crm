@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServicioResource\Pages;
+use App\Filament\Support\NotificarCliente;
 use App\Models\Barco;
 use App\Models\Courier;
 use App\Models\Escala;
@@ -176,7 +177,13 @@ class ServicioResource extends Resource
                                         ->searchable()
                                         ->nullable(),
                                     Forms\Components\Textarea::make('comentarios')
-                                        ->label(__('Comentarios'))
+                                        ->label('Narrative')
+                                        ->helperText(__('Se comparte con el cliente: aparece en la Delivery Note PDF.'))
+                                        ->rows(3)
+                                        ->columnSpanFull(),
+                                    Forms\Components\Textarea::make('notas')
+                                        ->label(__('Notas internas'))
+                                        ->helperText(__('Solo para uso interno. Nunca aparecen en la Delivery Note.'))
                                         ->rows(3)
                                         ->columnSpanFull(),
                                     Forms\Components\TextInput::make('enlace')
@@ -318,6 +325,7 @@ class ServicioResource extends Resource
                     ->iconButton()
                     ->url(fn (Servicio $record) => route('servicio.nota-entrega', $record))
                     ->openUrlInNewTab(),
+                NotificarCliente::configurar(Tables\Actions\Action::make('notificar_cliente'))->iconButton(),
                 Tables\Actions\ViewAction::make()->iconButton()->tooltip(__('Ver')),
                 Tables\Actions\EditAction::make()->iconButton()->tooltip(__('Editar')),
                 Tables\Actions\DeleteAction::make()->iconButton()->tooltip(__('Eliminar')),

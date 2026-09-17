@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PedidoResource\Pages;
 use App\Models\Escala;
+use App\Models\Estado;
 use App\Models\Pedido;
 use App\Models\Puerto;
 use Filament\Forms;
@@ -51,7 +52,7 @@ class PedidoResource extends Resource
                         '%s · %s · Estado: %s',
                         $record->numero_pedido,
                         $record->fecha_pedido?->format('d/m/Y'),
-                        ucfirst($record->estado_general ?? '—')
+                        Estado::etiqueta(Estado::TIPO_PEDIDO, $record->estado_general)
                     )
                     : null
                 )
@@ -150,14 +151,7 @@ class PedidoResource extends Resource
                                             ->columnSpanFull(),
                                         Forms\Components\Select::make('estado_general')
                                             ->label(__('Estado'))
-                                            ->options([
-                                                'pendiente'         => __('Pendiente'),
-                                                'preparado'         => __('Preparado'),
-                                                'facturado'         => __('Facturado'),
-                                                'despachado'        => __('Despachado'),
-                                                'entregado'         => __('Entregado'),
-                                                'entregado_parcial' => __('Entregado parcial'),
-                                            ])
+                                            ->options(fn (?string $state) => Estado::opciones(Estado::TIPO_PEDIDO, $state))
                                             ->default('pendiente')
                                             ->required()
                                             ->columnSpanFull(),
@@ -261,45 +255,13 @@ class PedidoResource extends Resource
                 Tables\Columns\TextColumn::make('estado_general')
                     ->label(__('Estado'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => match ($state) {
-                        'pendiente'         => __('Pendiente'),
-                        'preparado'         => __('Preparado'),
-                        'facturado'         => __('Facturado'),
-                        'despachado'        => __('Despachado'),
-                        'entregado_parcial' => __('Entregado parcial'),
-                        'entregado'         => __('Entregado'),
-                        default             => __(ucfirst($state)),
-                    })
-                    ->color(fn (string $state) => match ($state) {
-                        'pendiente'         => 'warning',
-                        'preparado'         => 'info',
-                        'facturado'         => 'gray',
-                        'despachado'        => 'primary',
-                        'entregado_parcial' => 'warning',
-                        'entregado'         => 'success',
-                        default             => 'gray',
-                    })
-                    ->icon(fn (string $state) => match ($state) {
-                        'pendiente'         => 'heroicon-m-clock',
-                        'preparado'         => 'heroicon-m-check',
-                        'facturado'         => 'heroicon-m-banknotes',
-                        'despachado'        => 'heroicon-m-truck',
-                        'entregado_parcial' => 'heroicon-m-arrow-path',
-                        'entregado'         => 'heroicon-m-check-circle',
-                        default             => null,
-                    }),
+                    ->formatStateUsing(fn (?string $state) => Estado::etiqueta(Estado::TIPO_PEDIDO, $state))
+                    ->color(fn (?string $state) => Estado::colorDe(Estado::TIPO_PEDIDO, $state)),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('estado_general')
                     ->label(__('Estado'))
-                    ->options([
-                        'pendiente'         => __('Pendiente'),
-                        'preparado'         => __('Preparado'),
-                        'facturado'         => __('Facturado'),
-                        'despachado'        => __('Despachado'),
-                        'entregado_parcial' => __('Entregado parcial'),
-                        'entregado'         => __('Entregado'),
-                    ]),
+                    ->options(fn () => Estado::opciones(Estado::TIPO_PEDIDO)),
                 Tables\Filters\SelectFilter::make('escala_id')
                     ->label(__('Escala'))
                     ->options(fn () => \App\Models\Escala::with('barco')
